@@ -1,0 +1,75 @@
+@charset "UTF-8";
+
+body.javadoc span.wbr::before {
+    content: "\200b";
+}
+
+body.javadoc strong.error {
+    color: #f00;
+    font-size: 150%;
+}
+
+body.javadoc .javadoc-members > tbody > .item > .name-purpose > .sig {
+    display: flex;
+}
+
+body.javadoc .javadoc-type-params > * > tr > .name,
+body.javadoc .javadoc-members > * > tr > .return-type,
+body.javadoc .javadoc-class-list > * > tr > .kind,
+body.javadoc .javadoc-package-list > * > tr > .kind,
+body.javadoc .javadoc-qualities > tbody > tr > .name,
+body.javadoc .javadoc-hierarchy > tbody > tr > .pad {
+    text-align: right;
+}
+
+body.javadoc .javadoc-qualities > tbody > tr > .name {
+    white-space: nowrap;
+}
+
+body.javadoc .javadoc-type-params > * > tr > .purpose,
+body.javadoc .javadoc-terminals > * > tr.heading > *,
+body.javadoc .javadoc-terminals > * > tr.item > .type,
+body.javadoc .javadoc-terminals > * > tr.item > .name,
+body.javadoc .javadoc-terminals > * > tr.item > .descr,
+body.javadoc .javadoc-members > * > tr > .modifiers,
+body.javadoc .javadoc-members > * > tr.heading > *,
+body.javadoc .javadoc-members > * > tr > .name-purpose,
+body.javadoc .javadoc-package-list > caption,
+body.javadoc .javadoc-package-list > * > tr.heading > *,
+body.javadoc .javadoc-package-list > * > tr > .name,
+body.javadoc .javadoc-package-list > * > tr > .purpose,
+body.javadoc .javadoc-class-list > * > tr > .name,
+body.javadoc .javadoc-class-list > * > tr > .purpose,
+body.javadoc .javadoc-qualities > tbody > tr > .value,
+body.javadoc .javadoc-hierarchy > tbody > tr > .link,
+body.javadoc .javadoc-hierarchy > * > tr > .purpose {
+    text-align: left;
+}
+
+body.javadoc .javadoc-terminals > * > tr > *,
+body.javadoc .javadoc-class-list > * > tr > *,
+body.javadoc .javadoc-package-list > * > tr > *,
+body.javadoc .javadoc-qualities > tbody > tr > *,
+body.javadoc .javadoc-members > tbody > .item,
+body.javadoc .javadoc-members > tbody > .item > .name-purpose > .sig > *,
+body.javadoc .javadoc-hierarchy > * > tr > * {
+    vertical-align: baseline;
+}
+
+body.javadoc pre.java {
+    margin: 0;
+    padding: 0;
+}
+
+body.javadoc .javadoc-members > tbody > .item.inherited {
+    opacity: 0.4;
+}
+
+body.javadoc .javadoc-subtypes > ul {
+    column-width: 16em;
+}
+
+body.javadoc .javadoc-undocumented > ul {
+    column-width: 18em;
+    column-fill: balance;
+}
