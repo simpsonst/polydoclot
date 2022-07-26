@@ -8,7 +8,7 @@ M4=m4
 
 PREFIX=/usr/local
 
-VWORDS:=$(shell src/getversion.sh --prefix=v --minor=MINOR --major=MAJOR)
+VWORDS:=$(shell src/getversion.sh --prefix=v MAJOR MINOR PATCH)
 VERSION:=$(word 1,$(VWORDS))
 LONG_VERSION:=$(word 2,$(VWORDS))
 

@@ -5,14 +5,15 @@
 while [ $# -gt 0 ] ; do
     arg="$1" ; shift
     case "$arg" in
-        (--major=*)
-            major_file="${arg#--major=}"
-            ;;
-        (--minor=*)
-            minor_file="${arg#--minor=}"
-            ;;
         (--prefix=*)
             prefix="${arg#--prefix=}"
+            ;;
+        (*)
+            if [ -z "$major_file" ] ; then
+                major_file="$arg"
+            elif [ -z "$minor_file" ] ; then
+                minor_file="$arg"
+            fi
             ;;
     esac
 done
