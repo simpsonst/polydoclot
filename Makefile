@@ -4,12 +4,13 @@ FIND=find
 XARGS=xargs
 PRINTF=printf
 SED=sed
-GETVERSION=git describe
 M4=m4
 
 PREFIX=/usr/local
 
-VERSION:=$(shell $(GETVERSION) 2> /dev/null)
+VWORDS:=$(shell src/getversion.sh --prefix=v --minor=MINOR --major=MAJOR)
+VERSION:=$(word 1,$(VWORDS))
+LONG_VERSION:=$(word 2,$(VWORDS))
 
 ## Provide a version of $(abspath) that can cope with spaces in the
 ## current directory.
@@ -49,21 +50,14 @@ DOC_SRC=$(call jardeps_srcdirs4jars,$(SELECTED_JARS))
 DOC_CORE=polydoclot$(DOC_CORE_SFX)
 
 ifneq ($(VERSION),)
-prepare-version::
+.PHONY: prepare-version
+VERSION: prepare-version
 	@$(MKDIR) tmp/
 	@$(ECHO) $(VERSION) > tmp/VERSION
-
-tmp/VERSION: | prepare-version
-VERSION: tmp/VERSION
-	@$(CMP) -s '$<' '$@' || $(CP) '$<' '$@'
+	@$(CMP) -s 'tmp/$@' '$@' || $(CP) 'tmp/$@' '$@'
 endif
 
-## Embed the SVN revision number into the code.
-#svnrevision=$(notdir $(subst :,/,$(shell svnversion)))
-detect-revision:
-	@$(MKDIR) tmp
-	@printf > 'tmp/revision' \
-	  'rcs=SVN\nrevision=%s\n' '$(shell svnversion)'
+## Embed the revision number into the code.
 $(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties): \
 	$(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties).m4 \
 	VERSION
