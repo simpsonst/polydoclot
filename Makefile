@@ -49,21 +49,28 @@ DOC_CLASSPATH += $(jars:%=$(JARDEPS_OUTDIR)/%.jar)
 DOC_SRC=$(call jardeps_srcdirs4jars,$(SELECTED_JARS))
 DOC_CORE=polydoclot$(DOC_CORE_SFX)
 
-ifneq ($(VERSION),)
+CMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
 .PHONY: prepare-version
+ifneq ($(VERSION),)
 VERSION: prepare-version
 	@$(MKDIR) tmp/
 	@$(ECHO) $(VERSION) > tmp/VERSION
-	@$(CMP) -s 'tmp/$@' '$@' || $(CP) 'tmp/$@' '$@'
+	@$(call CMPCP,tmp/$@,$@)
+endif
+ifneq ($(LONG_VERSION),)
+tmp/LONG_VERSION: prepare-version
+	@$(MKDIR) tmp/
+	@$(ECHO) $(LONG_VERSION) > $@.tmp
+	@$(call CMPCP,$@.tmp,$@)
 endif
 
 ## Embed the revision number into the code.
 $(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties): \
 	$(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties).m4 \
-	VERSION
-	@$(PRINTF) '[version props %s]\n' "$(file <VERSION)"
+	tmp/LONG_VERSION
+	@$(PRINTF) '[version props %s]\n' "$(file <tmp/LONG_VERSION)"
 	@$(MKDIR) '$(@D)'
-	@$(M4) -DVERSION='`$(file <VERSION)'"'" < '$<' > '$@'
+	@$(M4) -DVERSION='`$(file <tmp/LONG_VERSION)'"'" < '$<' > '$@'
 
 all:: installed-jars
 
