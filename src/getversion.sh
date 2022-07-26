@@ -39,16 +39,16 @@ fi
 
 if [ -n "$major_file" -a -r "$major_file" ] &&
    [[ "$release" =~ ^([0-9]+) ]] ; then
-    release="$((BASH_REMATCH[1] + 1)).0.0${gitadv:+-"$gitadv"}"
+    release="$((BASH_REMATCH[1] + 1)).0.0"
 elif [ -n "$minor_file" -a -r "$minor_file" ] &&
    [[ "$release" =~ ^([0-9]+)\.([0-9]+) ]] ; then
-    release="${BASH_REMATCH[1]}.$((BASH_REMATCH[2] + 1)).0${gitadv:+-"$gitadv"}"
+    release="${BASH_REMATCH[1]}.$((BASH_REMATCH[2] + 1)).0"
 elif [ -n "$gitadv" -o \( -n "$patch_file" -a -r "$patch_file" \) ] &&
    [[ "$release" =~ ^([0-9]+\.[0-9]+)\.([0-9]+) ]] ; then
-    release="${BASH_REMATCH[1]}.$((BASH_REMATCH[2] + 1))${gitadv:+-"$gitadv"}"
+    release="${BASH_REMATCH[1]}.$((BASH_REMATCH[2] + 1))"
 fi
 
-longrelease="${release}${gitrev:+-g"$gitrev"}"
+longrelease="${release}${gitadv:+-"$gitadv"}${gitrev:+-g"$gitrev"}"
 
 
 printf '%s %s\n' "$release" "$longrelease"
