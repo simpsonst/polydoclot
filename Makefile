@@ -77,7 +77,7 @@ install:: install-jars
 
 install-jars:: $(SELECTED_JARS:%=install-jar-%)
 
-version_polydoclot=$(patsubst v%,%,$(file <VERSION))
+version_polydoclot=$(file <VERSION)
 
 install-jar-%::
 	@$(call JARDEPS_INSTALL,$(PREFIX)/share/java,$*,$(version_$*))
