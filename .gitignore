@@ -3,5 +3,6 @@
 /jardeps-install.mk
 /jardeps-install.sh
 /VERSION
+/BUILD
 /classes/
 /scratch/

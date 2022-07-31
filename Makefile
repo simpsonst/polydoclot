@@ -10,7 +10,7 @@ PREFIX=/usr/local
 
 VWORDS:=$(shell src/getversion.sh --prefix=v MAJOR MINOR PATCH)
 VERSION:=$(word 1,$(VWORDS))
-LONG_VERSION:=$(word 2,$(VWORDS))
+BUILD:=$(word 2,$(VWORDS))
 
 ## Provide a version of $(abspath) that can cope with spaces in the
 ## current directory.
@@ -49,26 +49,30 @@ DOC_CLASSPATH += $(jars:%=$(JARDEPS_OUTDIR)/%.jar)
 DOC_SRC=$(call jardeps_srcdirs4jars,$(SELECTED_JARS))
 DOC_CORE=polydoclot$(DOC_CORE_SFX)
 
-ifneq ($(LONG_VERSION),)
-CMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
+MYCMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
 .PHONY: prepare-version
-tmp/LONG_VERSION: prepare-version
+prepare-version:
 	@$(MKDIR) tmp/
-	@$(ECHO) $(VERSION) > tmp/VERSION
-	@$(ECHO) $(LONG_VERSION) > $@.tmp
-	@$(call CMPCP,tmp/VERSION,VERSION)
-	@$(call CMPCP,$@.tmp,$@)
+ifneq ($(BUILD),)
+	$(file >tmp/BUILD,$(BUILD))
 endif
+ifneq ($(VERSION),)
+	$(file >tmp/VERSION,$(VERSION))
+endif
+BUILD: prepare-version
+	@$(call MYCMPCP,tmp/BUILD,$@)
+VERSION: prepare-version
+	@$(call MYCMPCP,tmp/VERSION,$@)
 
 ## Embed the revision number into the code.
 $(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties): \
 	$(call jardeps_files,core,uk.ac.lancs.polydoclot,dynamic.properties).m4 \
-	VERSION tmp/LONG_VERSION
-	@$(PRINTF) '[version props %s]\n' "$(file <tmp/LONG_VERSION)"
+	BUILD
+	@$(PRINTF) '[version props %s]\n' "$(file <BUILD)"
 	@$(MKDIR) '$(@D)'
-	@$(M4) -DVERSION='`$(file <tmp/LONG_VERSION)'"'" < '$<' > '$@'
+	@$(M4) -DVERSION='`$(file <BUILD)'"'" < '$<' > '$@'
 
-all:: installed-jars
+all:: installed-jars VERSION BUILD
 
 installed-jars:: $(SELECTED_JARS:%=$(JARDEPS_OUTDIR)/%.jar)
 installed-jars:: $(SELECTED_JARS:%=$(JARDEPS_OUTDIR)/%-src.zip)
@@ -93,7 +97,7 @@ blank:: clean
 	@-$(RM) -r $(JARDEPS_OUTDIR)
 
 distclean:: blank
-	$(RM) VERSION
+	$(RM) VERSION BUILD
 
 YEARS=2018,2019
 
