@@ -5,6 +5,8 @@ XARGS=xargs
 PRINTF=printf
 SED=sed
 M4=m4
+CMP=cmp -s
+CP=cp
 
 PREFIX=/usr/local
 
