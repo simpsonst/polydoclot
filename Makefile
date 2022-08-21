@@ -55,12 +55,8 @@ MYCMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
 .PHONY: prepare-version
 prepare-version:
 	@$(MKDIR) tmp/
-ifneq ($(BUILD),)
 	$(file >tmp/BUILD,$(BUILD))
-endif
-ifneq ($(VERSION),)
 	$(file >tmp/VERSION,$(VERSION))
-endif
 BUILD: prepare-version
 	@$(call MYCMPCP,tmp/BUILD,$@)
 VERSION: prepare-version
