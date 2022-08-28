@@ -26,7 +26,7 @@ MYABSPATH=$(foreach f,$1,$(if $(patsubst /%,,$f),$(MYCURDIR)$f,$f))
 
 SELECTED_JARS += polydoclot
 trees_polydoclot += core
-roots_core += uk.ac.lancs.polydoclot.Polydoclot
+roots_core=$(found_core)
 files_core/uk.ac.lancs.polydoclot += default-styles.css
 files_core/uk.ac.lancs.polydoclot += icons.properties
 files_core/uk.ac.lancs.polydoclot += hypertextents.properties
