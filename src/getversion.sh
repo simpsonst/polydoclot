@@ -32,7 +32,7 @@ if [[ "$release" =~ ^(.*)-([0-9]+)-g([0-9a-f]+)$ ]] ; then
 fi
 
 ## Detect untracked files or uncommitted changes.
-if git diff-index --quiet HEAD ; then
+if git diff-index --quiet HEAD 2> /dev/null ; then
     unset alpha
 else
     ## There's something to commit.
