@@ -53,8 +53,9 @@ DOC_CORE=polydoclot$(DOC_CORE_SFX)
 
 MYCMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
 .PHONY: prepare-version
-prepare-version:
+mktmp:
 	@$(MKDIR) tmp/
+prepare-version: mktmp
 	$(file >tmp/BUILD,$(BUILD))
 	$(file >tmp/VERSION,$(VERSION))
 BUILD: prepare-version
