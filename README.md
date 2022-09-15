@@ -210,9 +210,6 @@ In addition to `package-info` and `element-info` generated at the root of the do
   .html: t=text/html
   .en-GB: c=UTF-8 l=en-GB
   ```
-  
-  (The PHP script `src/share/webzip.php` reads this from zipped documentation.
-  .)
 
 - `doc-properties.xml` &ndash; These Java properties describe programmatically how to link to elements within the documentation.
   The property `link.scheme` holds a string that can be read by `MacroFormatter`, and subsequently be used to generate URIs to specific elements.
