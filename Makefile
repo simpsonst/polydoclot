@@ -49,7 +49,7 @@ DOC_PKGS += uk.ac.lancs.polydoclot.imports
 DOC_OVERVIEW=src/overview.html
 DOC_CLASSPATH += $(jars:%=$(JARDEPS_OUTDIR)/%.jar)
 DOC_SRC=$(call jardeps_srcdirs4jars,$(SELECTED_JARS))
-DOC_CORE=polydoclot$(DOC_CORE_SFX)
+DOC_CORE=polydoclot
 
 MYCMPCP=$(CMP) -s '$1' '$2' || $(CP) '$1' '$2'
 .PHONY: prepare-version
