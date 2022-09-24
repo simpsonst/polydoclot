@@ -51,10 +51,10 @@ if [[ "$release" =~ ^([0-9]+)[^0-9\.]*\.([0-9]+)[^0-9\.]*\.([0-9]+) ]] ; then
         longext="$alpha"
         release="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.$((BASH_REMATCH[3] + 1))"
     elif [ -n "$gitadv" ] ; then
-        longext=".$((gitadv + 1))$alpha"
+        longext=".$((${alpha:+1} + gitadv))$alpha"
         release="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
     else
-        longext=".1$alpha"
+        longext=".$((${alpha:+1} + 0))$alpha"
         release="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
     fi
 fi
