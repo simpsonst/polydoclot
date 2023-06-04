@@ -2670,6 +2670,7 @@ public final class Configuration {
 
         /* Record details of the class, if specified. */
         switch (elem.getKind()) {
+        case RECORD:
         case CLASS:
         case ENUM:
         case INTERFACE:
@@ -2735,6 +2736,7 @@ public final class Configuration {
                 .getQualifiedName().toString());
             break;
 
+        case RECORD:
         case MODULE:
         case TYPE_PARAMETER:
             break;

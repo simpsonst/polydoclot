@@ -192,6 +192,9 @@ public final class DocUtils {
         case CLASS:
             return "class plain";
 
+        case RECORD:
+            return "class record";
+
         case CONSTRUCTOR:
             return "member exec constr";
 
@@ -387,7 +390,8 @@ public final class DocUtils {
     public static ReturnTree getReturnTag(DocCommentTree comm) {
         Iterator<ReturnTree> list =
             getBlockTags(comm, ReturnTree.class,
-                         t -> t.getTagName().equals("return")).iterator();
+                         t -> t.getTagName().equals("return"))
+                .iterator();
         if (list.hasNext()) return list.next();
         return null;
     }
