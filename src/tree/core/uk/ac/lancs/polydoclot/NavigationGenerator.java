@@ -36,6 +36,7 @@
 
 package uk.ac.lancs.polydoclot;
 
+import com.sun.source.doctree.DocTree;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -46,7 +47,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.lang.model.element.ElementVisitor;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -72,12 +72,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.sun.source.doctree.DocTree;
-
 import uk.ac.lancs.polydoclot.util.Utils;
 
 /**
@@ -129,32 +125,41 @@ public final class NavigationGenerator {
             case BOOLEAN:
                 result.append("boolean");
                 break;
+
             case BYTE:
                 result.append("byte");
                 break;
+
             case CHAR:
                 result.append("char");
                 break;
+
             case SHORT:
                 result.append("short");
                 break;
+
             case INT:
                 result.append("int");
                 break;
+
             case LONG:
                 result.append("long");
                 break;
+
             case FLOAT:
                 result.append("float");
                 break;
+
             case DOUBLE:
                 result.append("double");
                 break;
+
             case DECLARED:
                 DeclaredType dt = (DeclaredType) type;
                 TypeElement dte = (TypeElement) dt.asElement();
                 result.append(dte.getQualifiedName());
                 break;
+
             default:
                 throw new AssertionError("unreachable");
             }
@@ -225,9 +230,8 @@ public final class NavigationGenerator {
             Element group =
                 doc.createElementNS(STANDARD_SITEMAP_NS_URI, "group");
             container.appendChild(group);
-            group
-                .setAttribute("name",
-                              slice.getContent("class-members.group." + key));
+            group.setAttribute("name",
+                               slice.getContent("class-members.group." + key));
             populate(doc, group, membs);
         }
     }
@@ -280,8 +284,7 @@ public final class NavigationGenerator {
             changeElem.setAttribute("prefix", "stdmap");
 
             /* Create the top-level elements. */
-            Element home =
-                doc.createElementNS(STANDARD_SITEMAP_NS_URI, "item");
+            Element home = doc.createElementNS(STANDARD_SITEMAP_NS_URI, "item");
             root.appendChild(home);
             home.setAttribute("role", "home");
             home.setAttribute("name",
@@ -289,20 +292,19 @@ public final class NavigationGenerator {
 
             List<? extends DocTree> anonGroupTitle =
                 slice.getTreeContent("group.unnamed"
-                    + (slice.config.groupedPackages.size() == 1 ? ".sole"
-                        : ""));
-            for (Map.Entry<Object, List<? extends DocTree>> entry : slice.config.groupTitles
-                .entrySet()) {
+                    + (slice.config.groupedPackages.size() == 1 ? ".sole" :
+                        ""));
+            for (Map.Entry<Object,
+                           List<? extends DocTree>> entry : slice.config.groupTitles
+                               .entrySet()) {
                 List<? extends DocTree> title = entry.getValue();
                 if (title == null) title = anonGroupTitle;
                 List<PackageElement> pkgList =
                     new ArrayList<>(slice.config.groupedPackages
-                        .getOrDefault(entry.getKey(),
-                                      Collections.emptySet()));
+                        .getOrDefault(entry.getKey(), Collections.emptySet()));
                 List<ModuleElement> modList =
                     new ArrayList<>(slice.config.groupedModules
-                        .getOrDefault(entry.getKey(),
-                                      Collections.emptySet()));
+                        .getOrDefault(entry.getKey(), Collections.emptySet()));
                 if (pkgList.isEmpty() && modList.isEmpty()) continue;
                 pkgList.sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                     .compare(a.getQualifiedName().toString(),
@@ -315,8 +317,8 @@ public final class NavigationGenerator {
                 root.appendChild(cont);
                 StringBuilder titleText = new StringBuilder();
                 slice.toHypertext(titleText::append, SourceContext.EMPTY,
-                                  OutputContext.plain(slice.config.types,
-                                                      null, null),
+                                  OutputContext.plain(slice.config.types, null,
+                                                      null),
                                   title);
                 cont.setAttribute("name", titleText.toString());
                 if (!modList.isEmpty()) {
@@ -348,10 +350,10 @@ public final class NavigationGenerator {
             for (javax.lang.model.element.Element item : slice.config.env
                 .getIncludedElements()) {
                 if (slice.config.excludedElements.contains(item)) continue;
-                if (item instanceof ModuleElement
-                    && ((ModuleElement) item).isUnnamed()) continue;
-                if (item instanceof PackageElement
-                    && ((PackageElement) item).isUnnamed()) continue;
+                if (item instanceof ModuleElement &&
+                    ((ModuleElement) item).isUnnamed()) continue;
+                if (item instanceof PackageElement &&
+                    ((PackageElement) item).isUnnamed()) continue;
 
                 URI loc = slice.config.locateElement(item);
                 OutputContext outCtxt = slice.getPlainContext(loc, item);
@@ -414,20 +416,18 @@ public final class NavigationGenerator {
                                 .sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                                     .compare(a.getSimpleName().toString(),
                                              b.getSimpleName().toString()));
-                            List<TypeElement> innerTypes =
-                                nestedTypes.stream()
-                                    .filter(t -> !t.getModifiers()
-                                        .contains(Modifier.STATIC))
-                                    .collect(Collectors.toList());
+                            List<TypeElement> innerTypes = nestedTypes.stream()
+                                .filter(t -> !t.getModifiers()
+                                    .contains(Modifier.STATIC))
+                                .collect(Collectors.toList());
                             nestedTypes.removeAll(innerTypes);
 
                             List<VariableElement> consts =
                                 new ArrayList<>(ElementFilter
                                     .fieldsIn(e.getEnclosedElements()));
-                            consts
-                                .sort((a, b) -> String.CASE_INSENSITIVE_ORDER
-                                    .compare(a.getSimpleName().toString(),
-                                             b.getSimpleName().toString()));
+                            consts.sort((a, b) -> String.CASE_INSENSITIVE_ORDER
+                                .compare(a.getSimpleName().toString(),
+                                         b.getSimpleName().toString()));
                             List<VariableElement> fields = consts.stream()
                                 .filter(f -> !f.getModifiers()
                                     .contains(Modifier.STATIC))
@@ -442,9 +442,8 @@ public final class NavigationGenerator {
                             List<ExecutableElement> constrs =
                                 new ArrayList<>(ElementFilter
                                     .constructorsIn(e.getEnclosedElements()));
-                            constrs
-                                .sort((a, b) -> String.CASE_INSENSITIVE_ORDER
-                                    .compare(a.toString(), b.toString()));
+                            constrs.sort((a, b) -> String.CASE_INSENSITIVE_ORDER
+                                .compare(a.toString(), b.toString()));
 
                             List<ExecutableElement> instanceMethods =
                                 new ArrayList<>(ElementFilter
@@ -459,14 +458,12 @@ public final class NavigationGenerator {
                                     .collect(Collectors.toList());
                             instanceMethods.removeAll(classMethods);
 
-                            addGroup(doc, elem, nestedTypes,
-                                     "static-classes");
+                            addGroup(doc, elem, nestedTypes, "static-classes");
                             addGroup(doc, elem, innerTypes, "inner-classes");
                             addGroup(doc, elem, consts, "constants");
                             addGroup(doc, elem, globals, "static-fields");
                             addGroup(doc, elem, fields, "fields");
-                            addGroup(doc, elem, classMethods,
-                                     "static-methods");
+                            addGroup(doc, elem, classMethods, "static-methods");
                             addGroup(doc, elem, constrs, "constructors");
                             addGroup(doc, elem, instanceMethods, "methods");
 
@@ -477,8 +474,7 @@ public final class NavigationGenerator {
             }
 
             /* Write out the full document. */
-            Transformer tf =
-                TransformerFactory.newInstance().newTransformer();
+            Transformer tf = TransformerFactory.newInstance().newTransformer();
             tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             tf.setOutputProperty(OutputKeys.INDENT, "yes");
             try (OutputStream out = Files.newOutputStream(navFile)) {
@@ -487,10 +483,9 @@ public final class NavigationGenerator {
                 slice.config.report(Kind.ERROR, "output.stdmap.failure.write",
                                     ex, navFile);
             }
-        } catch (ParserConfigurationException
-            | TransformerConfigurationException ex) {
-            slice.config.report(Kind.ERROR, "output.stdmap.failure.config",
-                                ex);
+        } catch (ParserConfigurationException |
+                 TransformerConfigurationException ex) {
+            slice.config.report(Kind.ERROR, "output.stdmap.failure.config", ex);
         }
     }
 }
