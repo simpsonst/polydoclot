@@ -176,8 +176,8 @@ public final class NavigationGenerator {
         case ENUM:
         case INTERFACE:
         case ANNOTATION_TYPE:
-            return "class-"
-                + caseless(((TypeElement) elem).getQualifiedName());
+        case RECORD:
+            return "class-" + caseless(((TypeElement) elem).getQualifiedName());
 
         case CONSTRUCTOR:
             return "constr-"
