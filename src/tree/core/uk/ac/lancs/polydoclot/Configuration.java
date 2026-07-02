@@ -2354,6 +2354,7 @@ public final class Configuration {
                 System.err.printf("Failed to resolve %s [%d]%s in %s%n", p.type,
                                   p.dims - (p.varargs ? 1 : 0),
                                   p.varargs ? "..." : "", sigText);
+                return null;
             }
             for (int i = 0; i < p.dims; i++)
                 baseType = types.getArrayType(baseType);
