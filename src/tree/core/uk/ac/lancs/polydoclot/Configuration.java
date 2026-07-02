@@ -477,6 +477,42 @@ public final class Configuration {
     }
 
     /**
+     * Check whether an element should be documented. To be documented,
+     * the element must not be listed in the excluded elements (tagged
+     * with <code>&#64;undocumented</code>, or whose ancestor is so
+     * tagged). The element must also be {@code public} or
+     * {@code protected}.
+     * 
+     * <p>
+     * Use {@link #isInvisible(Element)} to invert the sense of this
+     * test.
+     * 
+     * @param elem the element to test
+     * 
+     * @return {@code true} if the element should be documented
+     */
+    public boolean isVisible(Element elem) {
+        if (excludedElements.contains(elem)) return false;
+        var mods = elem.getModifiers();
+        if (mods.contains(Modifier.PUBLIC)) return true;
+        if (mods.contains(Modifier.PROTECTED)) return true;
+        return false;
+    }
+
+    /**
+     * Check whether an element should be excluded from documentation.
+     * This method simply inverts the result of
+     * {@link #isVisible(Element)}.
+     * 
+     * @param elem the element to test
+     * 
+     * @return {@code true} if the element should be excluded
+     */
+    public boolean isInvisible(Element elem) {
+        return !isVisible(elem);
+    }
+
+    /**
      * Add elements to an index. The index is a map from type element to
      * a collection of other elements. A set of type-element keys is
      * specified to map to a single element. This method iterates over

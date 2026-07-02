@@ -412,6 +412,7 @@ public final class NavigationGenerator {
                             List<TypeElement> nestedTypes =
                                 new ArrayList<>(ElementFilter
                                     .typesIn(e.getEnclosedElements()));
+                            nestedTypes.removeIf(slice.config::isInvisible);
                             nestedTypes
                                 .sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                                     .compare(a.getSimpleName().toString(),
@@ -425,6 +426,7 @@ public final class NavigationGenerator {
                             List<VariableElement> consts =
                                 new ArrayList<>(ElementFilter
                                     .fieldsIn(e.getEnclosedElements()));
+                            consts.removeIf(slice.config::isInvisible);
                             consts.sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                                 .compare(a.getSimpleName().toString(),
                                          b.getSimpleName().toString()));
@@ -442,6 +444,7 @@ public final class NavigationGenerator {
                             List<ExecutableElement> constrs =
                                 new ArrayList<>(ElementFilter
                                     .constructorsIn(e.getEnclosedElements()));
+                            constrs.removeIf(slice.config::isInvisible);
                             constrs.sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                                 .compare(a.toString(), b.toString()));
 
@@ -451,6 +454,7 @@ public final class NavigationGenerator {
                             instanceMethods
                                 .sort((a, b) -> String.CASE_INSENSITIVE_ORDER
                                     .compare(a.toString(), b.toString()));
+                            instanceMethods.removeIf(slice.config::isInvisible);
                             List<ExecutableElement> classMethods =
                                 instanceMethods.stream()
                                     .filter(m -> m.getModifiers()
