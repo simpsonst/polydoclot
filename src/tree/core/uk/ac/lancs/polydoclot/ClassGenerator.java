@@ -295,7 +295,7 @@ public final class ClassGenerator {
                     case ENUM:
                         (memb.getModifiers().contains(Modifier.STATIC) ?
                             staticClasses : innerClasses)
-                                .add((TypeElement) memb);
+                            .add((TypeElement) memb);
                         break;
 
                     case ENUM_CONSTANT:
@@ -316,7 +316,7 @@ public final class ClassGenerator {
                     case METHOD:
                         (memb.getModifiers().contains(Modifier.STATIC) ?
                             staticMethods : instanceMethods)
-                                .add((ExecutableElement) memb);
+                            .add((ExecutableElement) memb);
                         break;
 
                     default:

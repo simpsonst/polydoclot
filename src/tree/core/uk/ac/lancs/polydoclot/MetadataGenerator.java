@@ -47,12 +47,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Properties;
-
 import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-
 import uk.ac.lancs.polydoclot.imports.DocImport;
 import uk.ac.lancs.polydoclot.util.MacroFormatter;
 
@@ -127,8 +125,7 @@ public final class MetadataGenerator {
         config.report(Kind.ERROR, key, newCtxt);
     }
 
-    private void writeOfflineFiles(Path dir,
-                                   Collection<PackageElement> pkgList,
+    private void writeOfflineFiles(Path dir, Collection<PackageElement> pkgList,
                                    Collection<ModuleElement> modList) {
         Path oldFile = dir.resolve(DocImport.PACKAGE_LIST_NAME);
         try {
@@ -177,8 +174,7 @@ public final class MetadataGenerator {
             try {
                 Files.copy(in, defStyles, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ex) {
-                report("output.default-stylesheet.failure.copy", ex,
-                       defStyles);
+                report("output.default-stylesheet.failure.copy", ex, defStyles);
             }
         } catch (IOException ex) {
             report("output.default-stylesheet.failure.open", ex,
@@ -199,23 +195,20 @@ public final class MetadataGenerator {
         {
             Path contentTypesFile =
                 config.outputDirectory.resolve(CONTENT_TYPES_NAME);
-            try (
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(Files
-                    .newOutputStream(contentTypesFile), StandardCharsets.UTF_8))) {
+            try (PrintWriter out = new PrintWriter(new OutputStreamWriter(Files
+                .newOutputStream(contentTypesFile), StandardCharsets.UTF_8))) {
                 out.printf("DEFAULT: t=text/plain c=UTF-8\n");
                 out.printf(".xml: t=application/xml\n");
                 out.printf(".css: t=text/css c=UTF-8\n");
                 out.printf("%s: t=text/html\n", config.hypertextFileSuffix);
                 for (SliceSpecification spec : config.sliceSpecs) {
                     out.printf("%s: c=%s l=%s\n",
-                               spec.suffix.isEmpty() ? "DEFAULT"
-                                   : spec.suffix,
+                               spec.suffix.isEmpty() ? "DEFAULT" : spec.suffix,
                                spec.charset,
                                spec.locale.toString().replace('_', '-'));
                 }
             } catch (IOException ex) {
-                report("output.meta-data.failure.write", ex,
-                       contentTypesFile);
+                report("output.meta-data.failure.write", ex, contentTypesFile);
             }
         }
     }
@@ -242,8 +235,9 @@ public final class MetadataGenerator {
                            Collection<? extends PackageElement> pkgList,
                            Collection<? extends ModuleElement> modList)
         throws IOException {
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(Files
-            .newOutputStream(file), StandardCharsets.UTF_8))) {
+        try (PrintWriter out =
+            new PrintWriter(new OutputStreamWriter(Files.newOutputStream(file),
+                                                   StandardCharsets.UTF_8))) {
             for (PackageElement pkg : pkgList)
                 out.printf("%s\n", pkg.getQualifiedName());
             if (modList != null) for (ModuleElement mod : modList)

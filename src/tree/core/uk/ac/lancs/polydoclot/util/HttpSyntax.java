@@ -101,6 +101,7 @@ public final class HttpSyntax {
      */
     public static class Tokenizer {
         private char[] text;
+
         private int pos = 0;
 
         /**
@@ -307,8 +308,7 @@ public final class HttpSyntax {
          * 
          * @return {@code true} iff a parameter was parsed
          */
-        public boolean parseParameter(StringBuilder name,
-                                      StringBuilder value) {
+        public boolean parseParameter(StringBuilder name, StringBuilder value) {
             int p = pos;
             do {
                 parseWhitespace(0);

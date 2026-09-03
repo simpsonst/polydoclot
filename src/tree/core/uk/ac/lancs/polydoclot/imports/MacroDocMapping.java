@@ -39,9 +39,7 @@ package uk.ac.lancs.polydoclot.imports;
 import java.net.URI;
 import java.util.Properties;
 import java.util.function.BiConsumer;
-
 import javax.lang.model.element.Element;
-
 import uk.ac.lancs.polydoclot.util.MacroFormatter;
 
 /**
@@ -51,8 +49,11 @@ import uk.ac.lancs.polydoclot.util.MacroFormatter;
  */
 public class MacroDocMapping implements DocMapping {
     private final URI docBase;
+
     private final MacroFormatter formatter;
-    private final BiConsumer<? super Properties, ? super Element> propertySetter;
+
+    private final BiConsumer<? super Properties,
+                             ? super Element> propertySetter;
 
     /**
      * Create a mapping based on a macro format.
@@ -64,7 +65,8 @@ public class MacroDocMapping implements DocMapping {
      * 
      * @param formatter the macro format
      */
-    public MacroDocMapping(BiConsumer<? super Properties, ? super Element> propertySetter,
+    public MacroDocMapping(BiConsumer<? super Properties,
+                                      ? super Element> propertySetter,
                            URI docBase, MacroFormatter formatter) {
         this.propertySetter = propertySetter;
         this.docBase = docBase;

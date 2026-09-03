@@ -39,9 +39,7 @@ package uk.ac.lancs.polydoclot.imports;
 import java.net.URI;
 import java.util.Properties;
 import java.util.function.BiConsumer;
-
 import javax.lang.model.element.Element;
-
 import uk.ac.lancs.polydoclot.util.MacroFormatter;
 
 /**
@@ -51,8 +49,11 @@ import uk.ac.lancs.polydoclot.util.MacroFormatter;
  * @author simpsons
  */
 public final class MacroDocMappingFactory implements DocMappingFactory {
-    private final BiConsumer<? super Properties, ? super Element> propertySetter;
+    private final BiConsumer<? super Properties,
+                             ? super Element> propertySetter;
+
     private final String propertyName;
+
     private final String defaultValue;
 
     /**
@@ -66,7 +67,8 @@ public final class MacroDocMappingFactory implements DocMappingFactory {
      *
      * @param propertyName the name of the property to use
      */
-    public MacroDocMappingFactory(BiConsumer<? super Properties, ? super Element> propertySetter,
+    public MacroDocMappingFactory(BiConsumer<? super Properties,
+                                             ? super Element> propertySetter,
                                   String propertyName) {
         this(propertySetter, propertyName, null);
     }
@@ -82,7 +84,8 @@ public final class MacroDocMappingFactory implements DocMappingFactory {
      *
      * @param other the back-up factory if the property is not set
      */
-    public MacroDocMappingFactory(BiConsumer<? super Properties, ? super Element> propertySetter,
+    public MacroDocMappingFactory(BiConsumer<? super Properties,
+                                             ? super Element> propertySetter,
                                   String propertyName, String defaultValue) {
         this.propertySetter = propertySetter;
         this.propertyName = propertyName;
@@ -90,8 +93,7 @@ public final class MacroDocMappingFactory implements DocMappingFactory {
     }
 
     @Override
-    public DocMapping createMapping(URI docBase, URI cache,
-                                    Properties config) {
+    public DocMapping createMapping(URI docBase, URI cache, Properties config) {
         String scheme = config.getProperty(propertyName, defaultValue);
         if (scheme == null) return null;
         MacroFormatter format = new MacroFormatter(scheme);

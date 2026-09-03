@@ -79,10 +79,9 @@ public final class TextDestination {
      * 
      * @constructor
      */
-    public static TextDestination
-        ofChars(Consumer<? super CharSequence> out) {
-        return new TextDestination(s -> s.forEach(cp -> out
-            .accept(String.valueOf(Character.toChars(cp)))));
+    public static TextDestination ofChars(Consumer<? super CharSequence> out) {
+        return new TextDestination(s -> s
+            .forEach(cp -> out.accept(String.valueOf(Character.toChars(cp)))));
     }
 
     /**

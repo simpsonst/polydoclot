@@ -102,15 +102,14 @@ public final class Utils {
 
         /* TODO: This should really use the private
          * URI.equalIgnoreCase(String,String) method. */
-        if (target.getScheme() != null
-            && !target.getScheme().equalsIgnoreCase(base.getScheme()))
+        if (target.getScheme() != null &&
+            !target.getScheme().equalsIgnoreCase(base.getScheme()))
             return target;
 
         /* TODO: This should really use the private
          * URI.equal(String,String) method. */
-        if (target.getAuthority() != null
-            && !target.getAuthority().equals(base.getAuthority()))
-            return target;
+        if (target.getAuthority() != null &&
+            !target.getAuthority().equals(base.getAuthority())) return target;
 
         /* TODO: These paths should be first normalized. */
         String basePath = base.getPath();
@@ -131,8 +130,8 @@ public final class Utils {
 
         /* Count remaining complete path elements in the base, prefixing
          * the target with "../" for each one. */
-        for (int slash = basePath.indexOf('/', diff); slash > -1; slash =
-            basePath.indexOf('/', slash + 1))
+        for (int slash = basePath.indexOf('/', diff); slash > -1;
+             slash = basePath.indexOf('/', slash + 1))
             targetPath.insert(0, "../");
 
         /* Make sure the resultant path is not empty. */
@@ -140,8 +139,8 @@ public final class Utils {
 
         /* Build the new URI from the computed path. */
         try {
-            return new URI(null, null, targetPath.toString(),
-                           target.getQuery(), target.getFragment());
+            return new URI(null, null, targetPath.toString(), target.getQuery(),
+                           target.getFragment());
         } catch (URISyntaxException ex) {
             /* Shouldn't happen. */
             throw new AssertionError("unreachable");
@@ -198,8 +197,7 @@ public final class Utils {
      */
     public static URI absoluteFileOrURI(String str) {
         if (str.startsWith("/")) return Paths.get(str).toUri();
-        if (str.startsWith("."))
-            return Paths.get(str).toAbsolutePath().toUri();
+        if (str.startsWith(".")) return Paths.get(str).toAbsolutePath().toUri();
         return URI.create(str);
     }
 

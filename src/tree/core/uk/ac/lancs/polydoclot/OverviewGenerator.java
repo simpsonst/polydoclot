@@ -178,9 +178,7 @@ public final class OverviewGenerator {
         final URI ovLoc = config.outputDirectory.toUri()
             .resolve("overview-summary" + config.hypertextLinkSuffix);
         final OutputContext blockCtxt = OutputContext
-            .forBlock(config.types,
-                      ovLoc,
-                      null,
+            .forBlock(config.types, ovLoc, null,
                       HypertextEscaper.forCData(slice.spec.charset),
                       HypertextEscaper.forAttributes(slice.spec.charset));
         final SourceContext inCtxt = SourceContext.EMPTY;
@@ -212,16 +210,12 @@ public final class OverviewGenerator {
             out.printf("<head>\n");
             slice.writeHypertextMeta(out, blockCtxt, false);
             out.print("<title>");
-            slice.toHypertext(out::append,
-                              inCtxt,
-                              blockCtxt.forPureCharacterData(),
-                              config.title);
+            slice.toHypertext(out::append, inCtxt,
+                              blockCtxt.forPureCharacterData(), config.title);
             out.print("</title>\n");
             if (summary != null && !summary.isEmpty()) {
                 out.printf("<meta name=\"description\" content=\"");
-                slice.toHypertext(out::append,
-                                  inCtxt,
-                                  blockCtxt.inAttribute(),
+                slice.toHypertext(out::append, inCtxt, blockCtxt.inAttribute(),
                                   summary);
                 out.printf("\">\n");
             }
@@ -229,10 +223,7 @@ public final class OverviewGenerator {
             out.printf("</head>\n");
             out.printf("<body class=\"javadoc overview\">\n");
 
-            slice.writeUserSection(out,
-                                   blockCtxt,
-                                   "forematter",
-                                   "forematter",
+            slice.writeUserSection(out, blockCtxt, "forematter", "forematter",
                                    null);
             out.printf("<div class=\"javadoc-matter\">\n");
 
@@ -253,16 +244,13 @@ public final class OverviewGenerator {
                 !config.groupedModules.isEmpty()) {
                 out.print("<table class=\"javadoc-package-list\" summary=\"");
                 slice
-                    .toHypertext(out::append,
-                                 SourceContext.EMPTY,
-                                 blockCtxt.inAttribute(),
-                                 slice
+                    .toHypertext(out::append, SourceContext.EMPTY,
+                                 blockCtxt.inAttribute(), slice
                                      .getTreeContent("package-list.table-summary"));
                 out.print("\">\n");
-                if (false) out
-                    .printf("<caption>%s</caption>\n",
-                            blockCtxt.escape(slice
-                                .getContent("section.heading.overview.modules-packages")));
+                if (false)
+                    out.printf("<caption>%s</caption>\n", blockCtxt.escape(slice
+                        .getContent("section.heading.overview.modules-packages")));
                 for (Map.Entry<Object,
                                List<? extends DocTree>> entry : config.groupTitles
                                    .entrySet()) {
@@ -299,21 +287,17 @@ public final class OverviewGenerator {
                                        .containsKey(pkgDef) ? " deprecated" :
                                            "");
                         even = !even;
-                        out.printf("<td class=\"kind\">%s</td>\n",
-                                   blockCtxt.escape(slice
-                                       .getContent("module-package.kind.package")));
+                        out.printf("<td class=\"kind\">%s</td>\n", blockCtxt
+                            .escape(slice
+                                .getContent("module-package.kind.package")));
                         out.print("<td class=\"name\">");
-                        slice.writeElementReference(out::append,
-                                                    blockCtxt,
-                                                    pkgDef,
-                                                    LinkContent.NORMAL);
+                        slice.writeElementReference(out::append, blockCtxt,
+                                                    pkgDef, LinkContent.NORMAL);
                         out.print("</td>\n");
                         out.print("<td class=\"purpose\">");
                         if (!slice.writeSummary(out::append, blockCtxt, pkgDef))
                             slice
-                                .toHypertext(out::append,
-                                             srcCtxt,
-                                             blockCtxt,
+                                .toHypertext(out::append, srcCtxt, blockCtxt,
                                              slice
                                                  .getSyntheticDescription(pkgDef));
 
@@ -325,21 +309,17 @@ public final class OverviewGenerator {
                         out.printf("<tr class=\"module %s\">\n",
                                    even ? "even" : "odd");
                         even = !even;
-                        out.printf("<td class=\"kind\">%s</td>\n",
-                                   blockCtxt.escape(slice
-                                       .getContent("module-package.kind.module")));
+                        out.printf("<td class=\"kind\">%s</td>\n", blockCtxt
+                            .escape(slice
+                                .getContent("module-package.kind.module")));
                         out.print("<td class=\"name\">");
-                        slice.writeElementReference(out::append,
-                                                    blockCtxt,
-                                                    mod,
+                        slice.writeElementReference(out::append, blockCtxt, mod,
                                                     LinkContent.NORMAL);
                         out.print("</td>\n");
                         out.print("<td class=\"purpose\">");
                         if (!slice.writeSummary(out::append, blockCtxt, mod))
                             slice
-                                .toHypertext(out::append,
-                                             srcCtxt,
-                                             blockCtxt,
+                                .toHypertext(out::append, srcCtxt, blockCtxt,
                                              slice
                                                  .getSyntheticDescription(mod));
 
@@ -353,14 +333,12 @@ public final class OverviewGenerator {
 
             out.printf("<div class=\"javadoc-description\">\n");
             if (DocUtils.hasDescription(config.overviewDoc, false)) {
-                out.printf("<h2><span>%s</span></h2>\n",
-                           blockCtxt.escape(slice
-                               .getContent("section.heading.overview.description")));
+                out.printf("<h2><span>%s</span></h2>\n", blockCtxt.escape(slice
+                    .getContent("section.heading.overview.description")));
 
                 out.printf("<div class=\"body\">\n");
                 out.printf("<p>%s\n",
-                           slice.toHypertext(inCtxt,
-                                             blockCtxt,
+                           slice.toHypertext(inCtxt, blockCtxt,
                                              config.overviewDoc.getFullBody()));
                 out.printf("</div>\n");
             }
@@ -381,14 +359,11 @@ public final class OverviewGenerator {
 
             if (!config.referencedAuthors.isEmpty()) {
                 out.print("<div class=\"javadoc-authors\">\n");
-                out.printf("<h2><span>%s</span></h2>\n",
-                           blockCtxt.escape(slice
-                               .getContent("section.heading.authors")));
+                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
+                    .escape(slice.getContent("section.heading.authors")));
                 out.print("<div class=\"definitions\">\n");
                 for (String authorKey : config.referencedAuthors)
-                    slice.writeAuthor(out,
-                                      inCtxt,
-                                      blockCtxt,
+                    slice.writeAuthor(out, inCtxt, blockCtxt,
                                       config.authors.get(authorKey));
                 out.print("</div>\n");
                 out.print("</div>\n");
@@ -396,9 +371,8 @@ public final class OverviewGenerator {
 
             if (true && config.deprecatedElements.size() > 0) {
                 out.printf("<div class=\"deprecated\">");
-                out.printf("<h2><span>%s</span></h2>\n",
-                           blockCtxt.escape(slice
-                               .getContent("section.heading.deprecated")));
+                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
+                    .escape(slice.getContent("section.heading.deprecated")));
                 List<Element> elems = config.deprecatedElements.entrySet()
                     .stream().filter(e -> e.getValue().isExplicit())
                     .map(Map.Entry::getKey).sorted(this::compareElements)
@@ -410,9 +384,7 @@ public final class OverviewGenerator {
                 out.printf("<ul>\n");
                 for (Element elem : elems) {
                     out.print("\n<li>");
-                    slice.writeElementReference(out::append,
-                                                blockCtxt,
-                                                elem,
+                    slice.writeElementReference(out::append, blockCtxt, elem,
                                                 LinkContent.NORMAL);
                 }
                 out.printf("\n</ul>\n");
@@ -422,18 +394,15 @@ public final class OverviewGenerator {
             if (config.listUndocumented &&
                 slice.countUndocumentedElements() > 0) {
                 out.printf("<div class=\"javadoc-undocumented\">\n");
-                out.printf("<h2><span>%s</span></h2>\n",
-                           blockCtxt.escape(slice
-                               .getContent("section.heading.undocumented")));
+                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
+                    .escape(slice.getContent("section.heading.undocumented")));
                 List<Element> elems = new ArrayList<>();
                 slice.getUndocumentedElements(elems);
                 Collections.sort(elems, this::compareElements);
                 out.printf("<ul>\n");
                 for (Element elem : elems) {
                     out.print("\n<li>");
-                    slice.writeElementReference(out::append,
-                                                blockCtxt,
-                                                elem,
+                    slice.writeElementReference(out::append, blockCtxt, elem,
                                                 LinkContent.NORMAL);
                 }
                 out.printf("</ul>\n");
@@ -442,10 +411,7 @@ public final class OverviewGenerator {
 
             out.printf("</div>\n");
 
-            slice.writeUserSection(out,
-                                   blockCtxt,
-                                   "aftmatter",
-                                   "aftmatter",
+            slice.writeUserSection(out, blockCtxt, "aftmatter", "aftmatter",
                                    null);
 
             out.printf("</body>\n");

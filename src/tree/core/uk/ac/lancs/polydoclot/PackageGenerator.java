@@ -36,6 +36,7 @@
 
 package uk.ac.lancs.polydoclot;
 
+import com.sun.source.doctree.DocCommentTree;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -51,16 +52,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-
-import com.sun.source.doctree.DocCommentTree;
-
 import jdk.javadoc.doclet.DocletEnvironment;
 import uk.ac.lancs.polydoclot.util.Escaper;
 import uk.ac.lancs.polydoclot.util.HypertextEscaper;
@@ -72,7 +69,9 @@ import uk.ac.lancs.polydoclot.util.HypertextEscaper;
  */
 public final class PackageGenerator {
     private final Slice slice;
+
     private final Configuration config;
+
     private final DocletEnvironment env;
 
     /**
@@ -106,8 +105,8 @@ public final class PackageGenerator {
                     .split("\\.")) {
                     pos = pos.resolve(component);
                 }
-                pos = pos.resolve("package-summary"
-                    + config.hypertextFileSuffix + slice.spec.suffix);
+                pos = pos.resolve("package-summary" + config.hypertextFileSuffix
+                    + slice.spec.suffix);
                 pkgFile = pos;
             }
 
@@ -133,12 +132,10 @@ public final class PackageGenerator {
             /* Set properties for this element. */
             Properties pkgDefProps = new Properties();
             config.setElementProperties(pkgDefProps, pkgDef);
-            pkgDefProps
-                .setProperty("TITLE.SHORT", slice
-                    .toHypertext(SourceContext.EMPTY,
-                                 OutputContext.plain(config.types, pkgLoc,
-                                                     pkgDef),
-                                 config.shortTitle));
+            pkgDefProps.setProperty("TITLE.SHORT", slice
+                .toHypertext(SourceContext.EMPTY,
+                             OutputContext.plain(config.types, pkgLoc, pkgDef),
+                             config.shortTitle));
 
             /* Write out the file. */
             try (PrintWriter out = slice.openHypertextFile(pkgFile)) {
@@ -147,11 +144,9 @@ public final class PackageGenerator {
                 out.printf("<head>\n");
                 slice.writeHypertextMeta(out, blockCtxt);
                 slice.writeElementMetaLink("index", out::append, blockCtxt,
-                                           config.elements
-                                               .getModuleOf(pkgDef));
+                                           config.elements.getModuleOf(pkgDef));
                 out.printf("<title>%s</title>\n",
-                           slice.macroFormat("page.title.package",
-                                             pkgDefProps,
+                           slice.macroFormat("page.title.package", pkgDefProps,
                                              blockCtxt.escaper()));
                 slice.writeSummaryAsHypertextDescription(out::append,
                                                          blockCtxt
@@ -168,13 +163,11 @@ public final class PackageGenerator {
                 out.printf("<div class=\"javadoc-head\">\n");
                 out.printf("<h1><span>%s</span></h1>\n",
                            slice.toHypertext(pkgCtxt, blockCtxt, slice
-                               .macroFormatDoc("page.heading.package",
-                                               blockCtxt.escaper()
-                                                   .escape(pkgDefProps))));
+                               .macroFormatDoc("page.heading.package", blockCtxt
+                                   .escaper().escape(pkgDefProps))));
                 out.printf("<div class=\"javadoc-purpose\"><span>");
-                slice.writeSummaryOrSyntheticDescription(out::append,
-                                                         blockCtxt, pkgCtxt,
-                                                         pkgDef);
+                slice.writeSummaryOrSyntheticDescription(out::append, blockCtxt,
+                                                         pkgCtxt, pkgDef);
                 out.printf("</span></div>\n");
 
                 slice.writeElementQualities(out, blockCtxt, pkgDef);
@@ -186,8 +179,7 @@ public final class PackageGenerator {
                 if (!annots.isEmpty()) {
                     out.printf("<div class=\"javadoc-context\">\n");
                     out.printf("<pre class=\"java\">\n");
-                    slice.writeAnnotationMirrors(out, blockCtxt, annots, "",
-                                                 2);
+                    slice.writeAnnotationMirrors(out, blockCtxt, annots, "", 2);
                     out.print("package ");
                     out.print(blockCtxt.escape(pkgDef.getQualifiedName()));
                     out.print(";");
@@ -235,21 +227,20 @@ public final class PackageGenerator {
                      * exceptions. */
                     List<TypeElement> checkedList = new ArrayList<>();
                     List<TypeElement> uncheckedList = new ArrayList<>();
-                    for (Iterator<TypeElement> iter =
-                        classList.iterator(); iter.hasNext();) {
+                    for (Iterator<TypeElement> iter = classList.iterator();
+                         iter.hasNext();) {
                         TypeElement cur = iter.next();
                         if (config.types.isSubtype(cur.asType(),
-                                                   config.javaLangError)
-                            || config.types
+                                                   config.javaLangError) ||
+                            config.types
                                 .isSubtype(cur.asType(),
                                            config.javaLangRuntimeException)) {
                             iter.remove();
                             uncheckedList.add(cur);
                             continue;
                         }
-                        if (config.types
-                            .isSubtype(cur.asType(),
-                                       config.javaLangException)) {
+                        if (config.types.isSubtype(cur.asType(),
+                                                   config.javaLangException)) {
                             iter.remove();
                             checkedList.add(cur);
                             continue;
@@ -280,8 +271,8 @@ public final class PackageGenerator {
                     SourceContext membCtxt = SourceContext.forElement(memb);
                     out.printf("<tr class=\"item %s%s\">\n",
                                even ? "even" : "odd",
-                               config.deprecatedElements.containsKey(memb)
-                                   ? " deprecated" : "");
+                               config.deprecatedElements.containsKey(memb) ?
+                                   " deprecated" : "");
                     even = !even;
 
                     out.printf("<td class=\"kind\">");
@@ -290,12 +281,15 @@ public final class PackageGenerator {
                     case INTERFACE:
                         kindKey = "iface";
                         break;
+
                     case ENUM:
                         kindKey = "enum";
                         break;
+
                     case ANNOTATION_TYPE:
                         kindKey = "annot";
                         break;
+
                     case CLASS:
                         if (config.types.isSubtype(memb.asType(),
                                                    config.javaLangError))
@@ -305,12 +299,12 @@ public final class PackageGenerator {
                                        config.javaLangRuntimeException))
                             kindKey = "exception.unchecked";
                         else if (config.types
-                            .isSubtype(memb.asType(),
-                                       config.javaLangException))
+                            .isSubtype(memb.asType(), config.javaLangException))
                             kindKey = "exception.checked";
                         else
                             kindKey = "class";
                         break;
+
                     default:
                         break;
                     }
@@ -327,9 +321,8 @@ public final class PackageGenerator {
 
                     out.printf("<td class=\"purpose\">");
                     if (!slice.writeSummary(out::append, blockCtxt, memb))
-                        slice
-                            .toHypertext(out::append, membCtxt, blockCtxt,
-                                         slice.getSyntheticDescription(memb));
+                        slice.toHypertext(out::append, membCtxt, blockCtxt,
+                                          slice.getSyntheticDescription(memb));
 
                     out.printf("</td>\n");
 
@@ -341,8 +334,8 @@ public final class PackageGenerator {
                 slice.writeAuthorSection(out, pkgCtxt, blockCtxt, pkgDoc);
 
                 out.printf("</div>\n");
-                slice.writeUserSection(out, blockCtxt, "aftmatter",
-                                       "aftmatter", pkgDef);
+                slice.writeUserSection(out, blockCtxt, "aftmatter", "aftmatter",
+                                       pkgDef);
 
                 out.printf("</body>\n");
                 out.printf("</html>\n");
@@ -366,13 +359,12 @@ public final class PackageGenerator {
                         public FileVisitResult
                             visitFile(Path file, BasicFileAttributes attrs)
                                 throws IOException {
-                            Path out = staticsOut
-                                .resolve(staticsIn.relativize(file));
+                            Path out =
+                                staticsOut.resolve(staticsIn.relativize(file));
                             try {
                                 Files.createDirectories(out.getParent());
-                                Files
-                                    .copy(file, out,
-                                          StandardCopyOption.REPLACE_EXISTING);
+                                Files.copy(file, out,
+                                           StandardCopyOption.REPLACE_EXISTING);
                             } catch (IOException e) {
                                 config.report(Kind.ERROR,
                                               "doc-files.failure.io",

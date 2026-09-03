@@ -36,9 +36,8 @@
 
 package uk.ac.lancs.polydoclot;
 
-import java.util.List;
-
 import com.sun.source.doctree.DocTree;
+import java.util.List;
 
 /**
  * Determines how much detail of an element link or type link should be
@@ -54,86 +53,86 @@ public abstract class LinkContent {
      * @author simpsons
      */
     public static enum Context {
-    /**
-     * No context should be shown.
-     */
-    NONE {
-        @Override
-        public boolean isShowingPackage() {
-            return false;
-        }
+        /**
+         * No context should be shown.
+         */
+        NONE {
+            @Override
+            public boolean isShowingPackage() {
+                return false;
+            }
 
-        @Override
-        public boolean isShowingContainers() {
-            return false;
-        }
+            @Override
+            public boolean isShowingContainers() {
+                return false;
+            }
 
-        @Override
-        public boolean isShowingNecessaryContainers() {
-            return false;
-        }
-    },
+            @Override
+            public boolean isShowingNecessaryContainers() {
+                return false;
+            }
+        },
 
-    /**
-     * Only containing classes necessary to reach the output context
-     * class should be shown.
-     */
-    NECESSARY_CONTAINERS {
-        @Override
-        public boolean isShowingPackage() {
-            return false;
-        }
+        /**
+         * Only containing classes necessary to reach the output context
+         * class should be shown.
+         */
+        NECESSARY_CONTAINERS {
+            @Override
+            public boolean isShowingPackage() {
+                return false;
+            }
 
-        @Override
-        public boolean isShowingNecessaryContainers() {
-            return true;
-        }
+            @Override
+            public boolean isShowingNecessaryContainers() {
+                return true;
+            }
 
-        @Override
-        public boolean isShowingContainers() {
-            return false;
-        }
-    },
+            @Override
+            public boolean isShowingContainers() {
+                return false;
+            }
+        },
 
-    /**
-     * All containing classes should be shown, but no package.
-     */
-    ALL_CONTAINERS {
-        @Override
-        public boolean isShowingPackage() {
-            return false;
-        }
+        /**
+         * All containing classes should be shown, but no package.
+         */
+        ALL_CONTAINERS {
+            @Override
+            public boolean isShowingPackage() {
+                return false;
+            }
 
-        @Override
-        public boolean isShowingContainers() {
-            return true;
-        }
+            @Override
+            public boolean isShowingContainers() {
+                return true;
+            }
 
-        @Override
-        public boolean isShowingNecessaryContainers() {
-            return true;
-        }
-    },
+            @Override
+            public boolean isShowingNecessaryContainers() {
+                return true;
+            }
+        },
 
-    /**
-     * All containing classes and the package should be shown.
-     */
-    PACKAGE {
-        @Override
-        public boolean isShowingPackage() {
-            return true;
-        }
+        /**
+         * All containing classes and the package should be shown.
+         */
+        PACKAGE {
+            @Override
+            public boolean isShowingPackage() {
+                return true;
+            }
 
-        @Override
-        public boolean isShowingContainers() {
-            return true;
-        }
+            @Override
+            public boolean isShowingContainers() {
+                return true;
+            }
 
-        @Override
-        public boolean isShowingNecessaryContainers() {
-            return true;
-        }
-    };
+            @Override
+            public boolean isShowingNecessaryContainers() {
+                return true;
+            }
+        };
 
         /**
          * Determine whether the containing package should be shown.

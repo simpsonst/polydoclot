@@ -162,8 +162,7 @@ public final class Slice {
         this.spec = spec;
         this.contentBundle = ResourceBundle
             .getBundle(getClass().getPackage().getName() + ".Headings",
-                       this.spec.locale,
-                       getClass().getClassLoader());
+                       this.spec.locale, getClass().getClassLoader());
     }
 
     /**
@@ -497,8 +496,7 @@ public final class Slice {
                     if (inCtxt.element().getModifiers()
                         .contains(Modifier.STATIC)) {
                         config
-                            .report(Kind.WARNING,
-                                    inCtxt.element(),
+                            .report(Kind.WARNING, inCtxt.element(),
                                     "output.tag.inheritDoc.failure.unsupported");
                         return null;
                     }
@@ -510,8 +508,7 @@ public final class Slice {
                     break;
 
                 default:
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.inheritDoc.failure.unsupported");
                     return null;
                 }
@@ -524,12 +521,10 @@ public final class Slice {
                         writeInheritedReturnDocs(out,
                                                  (ExecutableElement) inCtxt
                                                      .element(),
-                                                 outCtxt,
-                                                 false);
+                                                 outCtxt, false);
                         return null;
                     } catch (IllegalArgumentException ex) {}
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.inheritDoc"
                                       + ".failure.unsupported");
                     return null;
@@ -572,13 +567,11 @@ public final class Slice {
                         writeInheritedParamDocs(out,
                                                 (ExecutableElement) inCtxt
                                                     .element(),
-                                                inCtxt.paramTag(),
-                                                outCtxt,
+                                                inCtxt.paramTag(), outCtxt,
                                                 false);
                         return null;
                     } catch (IllegalArgumentException ex) {}
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.inheritDoc"
                                       + ".failure.unsupported");
                     return null;
@@ -590,13 +583,11 @@ public final class Slice {
                         writeInheritedThrowsDocs(out,
                                                  (ExecutableElement) inCtxt
                                                      .element(),
-                                                 inCtxt.throwsTag(),
-                                                 outCtxt,
+                                                 inCtxt.throwsTag(), outCtxt,
                                                  false);
                         return null;
                     } catch (IllegalArgumentException ex) {
-                        config.report(Kind.WARNING,
-                                      inCtxt.element(),
+                        config.report(Kind.WARNING, inCtxt.element(),
                                       "output.tag.inheritDoc"
                                           + ".failure.unsupported");
                     }
@@ -606,8 +597,7 @@ public final class Slice {
                 if (inCtxt.blockTag()) {
                     /* We're in another block tag for which
                      * {@inheritDoc} has no meaning. */
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.inheritDoc.failure.unsupported");
                     return null;
                 }
@@ -621,8 +611,8 @@ public final class Slice {
                          * override. */
                         for (ExecutableElement membCand : ElementFilter
                             .methodsIn(cand.getEnclosedElements())) {
-                            if (!config.elements
-                                .overrides(methCtxt, membCand, typeCtxt))
+                            if (!config.elements.overrides(methCtxt, membCand,
+                                                           typeCtxt))
                                 continue;
                             DocCommentTree dct =
                                 config.docTrees.getDocCommentTree(membCand);
@@ -650,9 +640,7 @@ public final class Slice {
                         dct.getFirstSentence() : dct.getFullBody();
                     if (docs == null) continue;
                     if (docs.isEmpty()) continue;
-                    toHypertext(out,
-                                SourceContext.forElement(cand),
-                                outCtxt,
+                    toHypertext(out, SourceContext.forElement(cand), outCtxt,
                                 docs);
                     break;
                 }
@@ -709,9 +697,9 @@ public final class Slice {
                     if (DocUtils.isURIAttribute(node.getName().toString(),
                                                 attr.getName().toString())) {
                         /* Get the referenced location. */
-                        URI loc = URI.create(toHypertext(inCtxt,
-                                                         outCtxt.plain(),
-                                                         value));
+                        URI loc =
+                            URI.create(toHypertext(inCtxt, outCtxt.plain(),
+                                                   value));
 
                         /* Find out what the author thinks it means in
                          * absolute terms. */
@@ -759,10 +747,8 @@ public final class Slice {
                 final Element refed =
                     config.resolveSignature(inCtxt.element(), sig);
                 if (refed == null) {
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
-                                  "output.tag.link.failure.missing",
-                                  sig);
+                    config.report(Kind.WARNING, inCtxt.element(),
+                                  "output.tag.link.failure.missing", sig);
                     if (outCtxt.canMarkUpInline())
                         out.accept("<strong class=\"error\">");
                     out.accept(outCtxt.escape("[BAD LINK " + sig + "]"));
@@ -770,11 +756,8 @@ public final class Slice {
                     return null;
                 }
                 OutputContext newCtxt = plain ? outCtxt.inCode() : outCtxt;
-                writeElementReference(out,
-                                      newCtxt,
-                                      refed,
-                                      LinkContent.forLabel(inCtxt, label)
-                                          .withoutNonessentialContainers());
+                writeElementReference(out, newCtxt, refed, LinkContent
+                    .forLabel(inCtxt, label).withoutNonessentialContainers());
                 return null;
             }
 
@@ -810,8 +793,7 @@ public final class Slice {
 
                 switch (node.getTagName()) {
                 default:
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.failure.unknown",
                                   node.getTagName());
                     if (outCtxt.canMarkUpInline())
@@ -850,8 +832,7 @@ public final class Slice {
                                               "output.tag.link.failure.missing",
                                               sig);
                             else
-                                config.report(Kind.ERROR,
-                                              inCtxt.element(),
+                                config.report(Kind.ERROR, inCtxt.element(),
                                               "output.tag.link.failure.missing",
                                               sig);
                             if (outCtxt.canMarkUpInline())
@@ -872,8 +853,7 @@ public final class Slice {
                                         "output.tag.value.failure.outside-constant");
                         else
                             config
-                                .report(Kind.ERROR,
-                                        inCtxt.element(),
+                                .report(Kind.ERROR, inCtxt.element(),
                                         "output.tag.value.failure.outside-constant");
                         if (outCtxt.canMarkUpInline())
                             out.accept("<strong class=\"error\">");
@@ -891,8 +871,7 @@ public final class Slice {
                                             "output.tag.value.failure.outside-constant");
                             else
                                 config
-                                    .report(Kind.ERROR,
-                                            inCtxt.element(),
+                                    .report(Kind.ERROR, inCtxt.element(),
                                             "output.tag.value.failure.outside-constant");
                             if (outCtxt.canMarkUpInline())
                                 out.accept("<strong class=\"error\">");
@@ -910,11 +889,9 @@ public final class Slice {
                                               constant);
                             out.accept(outCtxt.escape(exp));
                         } catch (FormatFlagsConversionMismatchException ex) {
-                            config.report(Kind.ERROR,
-                                          inCtxt.element(),
+                            config.report(Kind.ERROR, inCtxt.element(),
                                           "output.tag.value.failure.bad-format",
-                                          ex.getConversion(),
-                                          ex.getFlags());
+                                          ex.getConversion(), ex.getFlags());
                             if (outCtxt.canMarkUpInline())
                                 out.accept("<strong class=\"error\">");
                             out.accept(outCtxt.escape("[BAD FORMAT]"));
@@ -927,8 +904,7 @@ public final class Slice {
                 }
 
                 case "keyword":
-                    config.report(Kind.WARNING,
-                                  inCtxt.element(),
+                    config.report(Kind.WARNING, inCtxt.element(),
                                   "output.tag.keyword.failure.unresolved",
                                   node.getTagName());
                     if (outCtxt.canMarkUpInline())
@@ -974,9 +950,7 @@ public final class Slice {
                                 visitUnknownInlineTag(UnknownInlineTagTree node,
                                                       Void p) {
                                 if (node.getTagName().equals("else")) {
-                                    toHypertext(out,
-                                                inCtxt,
-                                                outCtxt,
+                                    toHypertext(out, inCtxt, outCtxt,
                                                 config.unflattenDoc(node));
                                     return true;
                                 }
@@ -1017,9 +991,7 @@ public final class Slice {
                     List<DocTree> rem = new ArrayList<>();
                     String key = config.extractFlatLabel(node, rem);
                     String flat = contentBundle.getString(key);
-                    toHypertext(out,
-                                inCtxt,
-                                outCtxt,
+                    toHypertext(out, inCtxt, outCtxt,
                                 config.unflattenDoc(flat));
                 }
                     break;
@@ -1060,8 +1032,7 @@ public final class Slice {
                                           "output.tag.link.failure.missing",
                                           sig);
                         else
-                            config.report(Kind.ERROR,
-                                          inCtxt.element(),
+                            config.report(Kind.ERROR, inCtxt.element(),
                                           "output.tag.link.failure.missing",
                                           sig);
                         if (outCtxt.canMarkUpInline())
@@ -1082,8 +1053,7 @@ public final class Slice {
                                     "output.tag.value.failure.outside-constant");
                     else
                         config
-                            .report(Kind.ERROR,
-                                    inCtxt.element(),
+                            .report(Kind.ERROR, inCtxt.element(),
                                     "output.tag.value.failure.outside-constant");
                     if (outCtxt.canMarkUpInline())
                         out.accept("<strong class=\"error\">");
@@ -1101,8 +1071,7 @@ public final class Slice {
                                         "output.tag.value.failure.outside-constant");
                         else
                             config
-                                .report(Kind.ERROR,
-                                        inCtxt.element(),
+                                .report(Kind.ERROR, inCtxt.element(),
                                         "output.tag.value.failure.outside-constant");
                         if (outCtxt.canMarkUpInline())
                             out.accept("<strong class=\"error\">");
@@ -1143,8 +1112,7 @@ public final class Slice {
                             default:
                                 return IntStream.builder().add(c).build();
                             }
-                        }).collect(() -> buf,
-                                   StringBuilder::appendCodePoint,
+                        }).collect(() -> buf, StringBuilder::appendCodePoint,
                                    StringBuilder::append);
                         buf.append('"');
                         rep = buf.toString();
@@ -1225,9 +1193,7 @@ public final class Slice {
             out.print("<div class=\"name\">");
             if (author.site != null) {
                 out.print("<a href=\"");
-                toHypertext(out::append,
-                            inCtxt,
-                            blockCtxt.inAttribute(),
+                toHypertext(out::append, inCtxt, blockCtxt.inAttribute(),
                             author.site);
                 out.print("\">");
             }
@@ -1239,9 +1205,7 @@ public final class Slice {
         if (author.email != null) {
             out.print("<div class=\"email\"><samp>");
             out.print("<a href=\"mailto:");
-            toHypertext(out::append,
-                        inCtxt,
-                        blockCtxt.inAttribute(),
+            toHypertext(out::append, inCtxt, blockCtxt.inAttribute(),
                         author.email);
             out.print("\">");
             toHypertext(out::append, inCtxt, blockCtxt, author.email);
@@ -1262,9 +1226,7 @@ public final class Slice {
 
         if (author.address != null) {
             out.print("<address class=\"addr\">\n");
-            toHypertext(out::append,
-                        inCtxt,
-                        blockCtxt.inline(),
+            toHypertext(out::append, inCtxt, blockCtxt.inline(),
                         author.address);
             out.print("</address>\n");
         }
@@ -1300,22 +1262,14 @@ public final class Slice {
         final int depth = getSubtypeDepth(config.knownDirectSubtypes, roots);
 
         out.printf("<table class=\"javadoc-hierarchy\" summary=\"");
-        toHypertext(out::append,
-                    SourceContext.EMPTY,
-                    blockCtxt.inAttribute(),
+        toHypertext(out::append, SourceContext.EMPTY, blockCtxt.inAttribute(),
                     getTreeContent("class-hierarchy.table-summary"));
         out.printf("\">\n");
-        out.printf("<caption>%s</caption>\n",
-                   blockCtxt
-                       .escape(getContent("section.heading.class-hierarchy")));
+        out.printf("<caption>%s</caption>\n", blockCtxt
+            .escape(getContent("section.heading.class-hierarchy")));
         out.printf("<tbody>\n");
-        writeSubtypes(out,
-                      blockCtxt,
-                      config.knownDirectSubtypes,
-                      depth,
-                      new AtomicBoolean(false),
-                      0,
-                      roots);
+        writeSubtypes(out, blockCtxt, config.knownDirectSubtypes, depth,
+                      new AtomicBoolean(false), 0, roots);
         out.printf("</tbody>\n");
         out.printf("</table>\n");
     }
@@ -1331,8 +1285,7 @@ public final class Slice {
         for (TypeElement root : roots.stream()
             .sorted(DocUtils.ENCLOSED_NAME_ORDER)
             .collect(Collectors.toList())) {
-            out.printf("<tr class=\"item %s%s\">",
-                       odd.get() ? "odd" : "even",
+            out.printf("<tr class=\"item %s%s\">", odd.get() ? "odd" : "even",
                        config.deprecatedElements.containsKey(root) ?
                            " deprecated" : "");
             if (depth > 1) out
@@ -1341,20 +1294,13 @@ public final class Slice {
             odd.set(!odd.get());
             out.printf("<td class=\"link\" align=\"left\"" + " colspan=\"%d\">",
                        maxDepth - depth);
-            writeElementReference(out::append,
-                                  blockCtxt,
-                                  root,
+            writeElementReference(out::append, blockCtxt, root,
                                   LinkContent.NORMAL);
             out.printf("</td>");
             out.printf(" <td class=\"purpose\">");
             writeSummary(out::append, blockCtxt, root);
             out.printf("</td></tr>\n");
-            writeSubtypes(out,
-                          blockCtxt,
-                          subtypes,
-                          maxDepth,
-                          odd,
-                          depth + 1,
+            writeSubtypes(out, blockCtxt, subtypes, maxDepth, odd, depth + 1,
                           subtypes.get(root));
         }
     }
@@ -1378,9 +1324,7 @@ public final class Slice {
                                            SourceContext srcCtxt,
                                            Element elem) {
         if (!this.writeSummary(out, outCtxt, elem))
-            this.toHypertext(out,
-                             srcCtxt,
-                             outCtxt,
+            this.toHypertext(out, srcCtxt, outCtxt,
                              this.getSyntheticDescription(elem));
     }
 
@@ -1405,9 +1349,7 @@ public final class Slice {
         out.printf("<table class=\"javadoc-qualities %s%s\" summary=\"",
                    outCtxt.escape(DocUtils.getStyleClass(elem)),
                    deprecated ? " deprecated" : "");
-        toHypertext(out::append,
-                    SourceContext.EMPTY,
-                    outCtxt.inAttribute(),
+        toHypertext(out::append, SourceContext.EMPTY, outCtxt.inAttribute(),
                     getTreeContent("quality.table-summary"));
         out.print("\">\n");
 
@@ -1416,9 +1358,7 @@ public final class Slice {
                    outCtxt.escape(this.getContent("quality.summary")));
         SourceContext srcCtxt = SourceContext.forElement(elem);
         if (!this.writeSummary(out::append, outCtxt, elem)) {
-            toHypertext(out::append,
-                        srcCtxt,
-                        outCtxt,
+            toHypertext(out::append, srcCtxt, outCtxt,
                         getSyntheticDescription(elem));
         }
         out.printf("</td></tr>\n");
@@ -1432,8 +1372,7 @@ public final class Slice {
                                        .resolve("overview-summary"
                                            + config.hypertextLinkSuffix))
                        .toASCIIString()),
-                   this.toHypertext(SourceContext.EMPTY,
-                                    outCtxt,
+                   this.toHypertext(SourceContext.EMPTY, outCtxt,
                                     config.title));
         Path elemFile = config.locateSource(elem);
         while (elemFile != null) {
@@ -1470,9 +1409,7 @@ public final class Slice {
             if (pkg.isUnnamed()) {
                 out.print(outCtxt.escape(this.getContent("package.unnamed")));
             } else {
-                writeElementReference(out::append,
-                                      outCtxt,
-                                      pkg,
+                writeElementReference(out::append, outCtxt, pkg,
                                       LinkContent.NORMAL);
                 out.print("<br/>");
                 writeSummary(out::append, outCtxt, pkg);
@@ -1485,9 +1422,7 @@ public final class Slice {
             out.printf("<tr class=\"version\"><td class=\"name\">%s</td>",
                        outCtxt.escape(this.getContent("quality.version")));
             out.printf(" <td class=\"value\">");
-            toHypertext(out::append,
-                        SourceContext.forElement(elem),
-                        outCtxt,
+            toHypertext(out::append, SourceContext.forElement(elem), outCtxt,
                         tag.getBody());
             out.printf("</td>\n");
             out.printf("</tr>\n");
@@ -1497,9 +1432,7 @@ public final class Slice {
             out.printf("<tr class=\"since\"><td class=\"name\">%s</td>",
                        outCtxt.escape(this.getContent("quality.since")));
             out.printf(" <td class=\"value\">");
-            toHypertext(out::append,
-                        SourceContext.forElement(elem),
-                        outCtxt,
+            toHypertext(out::append, SourceContext.forElement(elem), outCtxt,
                         tag.getBody());
             out.printf("</td>\n");
             out.printf("</tr>\n");
@@ -1522,19 +1455,15 @@ public final class Slice {
                     out.printf("<ul>");
                     for (Element c : cause) {
                         out.printf("<li>");
-                        writeElementReference(out::append,
-                                              outCtxt,
-                                              c,
+                        writeElementReference(out::append, outCtxt, c,
                                               LinkContent.NORMAL
                                                   .withoutNonessentialContainers());
                     }
                     out.printf("</ul>");
                 }
             } else {
-                toHypertext(out::append,
-                            SourceContext.forElement(elem),
-                            outCtxt,
-                            tag.getBody());
+                toHypertext(out::append, SourceContext.forElement(elem),
+                            outCtxt, tag.getBody());
             }
             out.printf("</td>\n");
             out.printf("</tr>\n");
@@ -1545,13 +1474,10 @@ public final class Slice {
         case ENUM:
         case INTERFACE:
         case ANNOTATION_TYPE:
-            out.printf("<tr class=\"class\"><td class=\"name\">%s</td>",
-                       outCtxt.escape(this
-                           .getContent("quality.containing-class")));
+            out.printf("<tr class=\"class\"><td class=\"name\">%s</td>", outCtxt
+                .escape(this.getContent("quality.containing-class")));
             out.print(" <td class=\"value\">");
-            this.writeElementReference(out::append,
-                                       outCtxt,
-                                       typeContainer,
+            this.writeElementReference(out::append, outCtxt, typeContainer,
                                        LinkContent.NORMAL);
             out.print("<br/>");
             this.writeSummary(out::append, outCtxt, typeContainer);
@@ -1654,20 +1580,12 @@ public final class Slice {
                 out.printf("<li class=\"javadoc%s\">",
                            elem == null ? " failed" : "");
                 if (elem == null)
-                    toHypertext(out::append,
-                                inCtxt,
-                                outCtxt,
+                    toHypertext(out::append, inCtxt, outCtxt,
                                 parts.subList(1, parts.size()));
                 else
-                    writeElementReference(out::append,
-                                          outCtxt,
-                                          elem,
-                                          LinkContent
-                                              .forLabel(inCtxt,
-                                                        parts
-                                                            .subList(1,
-                                                                     parts
-                                                                         .size())));
+                    writeElementReference(out::append, outCtxt, elem,
+                                          LinkContent.forLabel(inCtxt, parts
+                                              .subList(1, parts.size())));
                 out.print("</li>\n");
             }
         }
@@ -1699,12 +1617,9 @@ public final class Slice {
         List<Author> hereAuthors = new ArrayList<>();
         List<AuthorTree> unknownAuthors = new ArrayList<>();
         for (AuthorTree tag : authors) {
-            String authorKey =
-                toHypertext(inCtxt,
-                            OutputContext.plain(config.types,
-                                                outCtxt.location(),
-                                                outCtxt.element()),
-                            resolveTextTags(tag.getName()));
+            String authorKey = toHypertext(inCtxt, OutputContext
+                .plain(config.types, outCtxt.location(), outCtxt.element()),
+                                           resolveTextTags(tag.getName()));
             Author author = config.authors.get(authorKey);
             if (config.referencedAuthors.contains(authorKey)) {
                 assert author != null;
@@ -1731,9 +1646,7 @@ public final class Slice {
                 URI relLoc = Utils.relativize(outCtxt.location(), authorLoc);
                 out.printf("<li class=\"ref\"><a href=\"%s\">",
                            outCtxt.escapeAttribute(relLoc.toASCIIString()));
-                toHypertext(out::append,
-                            SourceContext.EMPTY,
-                            outCtxt.inLink(),
+                toHypertext(out::append, SourceContext.EMPTY, outCtxt.inLink(),
                             author.name);
                 out.print("</a></li>\n");
             }
@@ -2030,14 +1943,10 @@ public final class Slice {
             logDir = config.diagnosticsDirectory.resolve(config.outputDirectory
                 .relativize(file.getParent()).toString());
             String tmpLeafname = file.getParent().relativize(file).toString();
-            leafname = tmpLeafname
-                .substring(0,
-                           tmpLeafname.length()
-                               - config.hypertextFileSuffix.length());
+            leafname = tmpLeafname.substring(0, tmpLeafname.length()
+                - config.hypertextFileSuffix.length());
             if (false) System.err.printf("HTML: %s%nLog dir: %s%nLeaf: %s%n",
-                                         file,
-                                         logDir,
-                                         leafname);
+                                         file, logDir, leafname);
         } else {
             logDir = null;
             leafname = null;
@@ -2054,12 +1963,8 @@ public final class Slice {
         } else {
             /* Insert an HTMLTidy process. */
             List<String> tidyArgs =
-                new ArrayList<>(Arrays.asList(config.tidyProgram,
-                                              "-i",
-                                              "-q",
-                                              "-utf8",
-                                              "--wrap",
-                                              "0"));
+                new ArrayList<>(Arrays.asList(config.tidyProgram, "-i", "-q",
+                                              "-utf8", "--wrap", "0"));
             if (logDir != null) {
                 tidyArgs.add("-f");
                 tidyArgs.add(tidyLog.toString());
@@ -2084,8 +1989,7 @@ public final class Slice {
 
                     case 1:
                         if (tidyLog != null)
-                            config.report(Kind.WARNING,
-                                          "tidy.warning.see",
+                            config.report(Kind.WARNING, "tidy.warning.see",
                                           tidyLog);
                         else
                             config.report(Kind.WARNING, "tidy.warning");
@@ -2093,8 +1997,7 @@ public final class Slice {
 
                     default:
                         if (tidyLog != null)
-                            config.report(Kind.ERROR,
-                                          "tidy.failure.see",
+                            config.report(Kind.ERROR, "tidy.failure.see",
                                           tidyLog);
                         else
                             config.report(Kind.ERROR, "tidy.failure");
@@ -2110,8 +2013,7 @@ public final class Slice {
          * specified charset, and write out to the file. */
         convertCharset(config.executor,
                        pipeline.get(pipeline.size() - 1).getInputStream(),
-                       StandardCharsets.UTF_8,
-                       Files.newOutputStream(file),
+                       StandardCharsets.UTF_8, Files.newOutputStream(file),
                        spec.charset);
 
         /* Prepare to write to the pipeline. */
@@ -2155,8 +2057,7 @@ public final class Slice {
         out.accept("\" title=\"");
         Properties titleProps = new Properties();
         config.setElementProperties(titleProps, refed);
-        out.accept(Slice.this.macroFormat("link.title.element",
-                                          titleProps,
+        out.accept(Slice.this.macroFormat("link.title.element", titleProps,
                                           outCtxt.attributeEscaper()));
         out.accept("\" href=\"");
         outCtxt.writeAttribute(out, location);
@@ -2176,13 +2077,10 @@ public final class Slice {
             @Override
             public Void visitModule(ModuleElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                 } else {
-                    writeCamelText(out,
-                                   inLink,
+                    writeCamelText(out, inLink,
                                    e.getQualifiedName().toString());
                 }
                 return null;
@@ -2191,13 +2089,10 @@ public final class Slice {
             @Override
             public Void visitPackage(PackageElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                 } else {
-                    writeCamelText(out,
-                                   inLink,
+                    writeCamelText(out, inLink,
                                    e.getQualifiedName().toString());
                 }
                 return null;
@@ -2206,9 +2101,7 @@ public final class Slice {
             @Override
             public Void visitType(TypeElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                     return null;
                 }
@@ -2223,9 +2116,7 @@ public final class Slice {
                 switch (execType.getKind()) {
                 case PACKAGE:
                     if (detail.isShowingPackage()) {
-                        writeElementReference(out,
-                                              encCtxt,
-                                              execType,
+                        writeElementReference(out, encCtxt, execType,
                                               LinkContent.NORMAL);
                         if (inLink.canMarkUpInline())
                             out.accept(HYPERTEXT_WORD_BREAK);
@@ -2240,9 +2131,7 @@ public final class Slice {
                     if (detail.isShowingContainers() || (detail
                         .isShowingNecessaryContainers() &&
                         !config.enclosesOrSame(outCtxt.element(), execType))) {
-                        writeElementReference(out,
-                                              encCtxt,
-                                              execType,
+                        writeElementReference(out, encCtxt, execType,
                                               LinkContent.NORMAL);
                         if (inLink.canMarkUpInline())
                             out.accept(HYPERTEXT_WORD_BREAK);
@@ -2279,9 +2168,7 @@ public final class Slice {
             @Override
             public Void visitExecutable(ExecutableElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                     return null;
                 }
@@ -2295,9 +2182,7 @@ public final class Slice {
                 if (detail.isShowingContainers() ||
                     (detail.isShowingNecessaryContainers() &&
                         !config.enclosesOrSame(outCtxt.element(), execType))) {
-                    writeElementReference(out,
-                                          encCtxt,
-                                          execType,
+                    writeElementReference(out, encCtxt, execType,
                                           LinkContent.NORMAL);
                     if (inLink.canMarkUpInline())
                         out.accept(HYPERTEXT_WORD_BREAK);
@@ -2306,8 +2191,7 @@ public final class Slice {
 
                 if (e.getKind() == ElementKind.CONSTRUCTOR) {
                     /* Write the constructor's class's name. */
-                    writeCamelText(out,
-                                   inLink,
+                    writeCamelText(out, inLink,
                                    e.getEnclosingElement().getSimpleName());
                 } else {
                     /* Write the method's name. */
@@ -2327,16 +2211,13 @@ public final class Slice {
                         sep = ", ";
 
                         if (i == vararg) {
-                            writeTypeReference(out,
-                                               inLink,
+                            writeTypeReference(out, inLink,
                                                ((ArrayType) ve.asType())
                                                    .getComponentType(),
                                                LinkContent.NORMAL);
                             out.accept(inLink.escape("..."));
                         } else {
-                            writeTypeReference(out,
-                                               inLink,
-                                               ve.asType(),
+                            writeTypeReference(out, inLink, ve.asType(),
                                                LinkContent.NORMAL);
                         }
                     }
@@ -2349,9 +2230,7 @@ public final class Slice {
             @Override
             public Void visitVariable(VariableElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                     return null;
                 }
@@ -2366,9 +2245,7 @@ public final class Slice {
                 if (detail.isShowingContainers() ||
                     (detail.isShowingNecessaryContainers() &&
                         !config.enclosesOrSame(outCtxt.element(), execType))) {
-                    writeElementReference(out,
-                                          encCtxt,
-                                          execType,
+                    writeElementReference(out, encCtxt, execType,
                                           LinkContent.NORMAL);
                     if (outCtxt.canMarkUpInline())
                         out.accept(HYPERTEXT_WORD_BREAK);
@@ -2384,9 +2261,7 @@ public final class Slice {
             @Override
             public Void visitTypeParameter(TypeParameterElement e, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                     return null;
                 }
@@ -2455,8 +2330,7 @@ public final class Slice {
             Properties titleProps = new Properties();
             config.setElementProperties(titleProps, refed);
             out.accept(Slice.this
-                .macroFormat("link.title.element",
-                             titleProps,
+                .macroFormat("link.title.element", titleProps,
                              enclosedOutCtxt.attributeEscaper()));
             if (makeLink) {
                 out.accept("\"");
@@ -2513,9 +2387,7 @@ public final class Slice {
             @Override
             public Void visitPrimitive(PrimitiveType t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
                     out.accept(enclosedOutCtxt.escape(DocUtils.getLongName(t)));
@@ -2526,13 +2398,10 @@ public final class Slice {
             @Override
             public Void visitArray(ArrayType t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
-                    writeTypeReference(out,
-                                       enclosedOutCtxt,
+                    writeTypeReference(out, enclosedOutCtxt,
                                        t.getComponentType(),
                                        LinkContent.NORMAL);
                     out.accept(enclosedOutCtxt.escape("[]"));
@@ -2577,8 +2446,7 @@ public final class Slice {
                     Properties titleProps = new Properties();
                     config.setElementProperties(titleProps, elem);
                     out.accept(Slice.this
-                        .macroFormat("link.title.element",
-                                     titleProps,
+                        .macroFormat("link.title.element", titleProps,
                                      enclosedOutCtxt.attributeEscaper()));
                     if (makeLink) {
                         out.accept("\"");
@@ -2589,17 +2457,14 @@ public final class Slice {
                 }
 
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                inLink,
+                    toHypertext(out, detail.sourceContext(), inLink,
                                 detail.label());
                 } else {
                     if (detail.isShowingPackage() || elemLoc == null) {
                         /* Since we can't provide a link, or we have
                          * been specifically asked to, print the full
                          * package too. */
-                        writeElementReference(out,
-                                              inLink,
+                        writeElementReference(out, inLink,
                                               config.elements
                                                   .getPackageOf(t.asElement()),
                                               LinkContent.NORMAL);
@@ -2610,9 +2475,7 @@ public final class Slice {
 
                     TypeMirror encloser = t.getEnclosingType();
                     if (encloser.getKind() != TypeKind.NONE) {
-                        writeTypeReference(out,
-                                           inLink,
-                                           encloser,
+                        writeTypeReference(out, inLink, encloser,
                                            LinkContent.NORMAL);
                         if (inLink.canMarkUpInline())
                             out.accept(HYPERTEXT_WORD_BREAK);
@@ -2636,9 +2499,7 @@ public final class Slice {
                     for (TypeMirror ta : tas) {
                         out.accept(enclosedOutCtxt.escape(sep));
                         sep = ", ";
-                        writeTypeReference(out,
-                                           enclosedOutCtxt,
-                                           ta,
+                        writeTypeReference(out, enclosedOutCtxt, ta,
                                            LinkContent.NORMAL);
                     }
                     out.accept(enclosedOutCtxt.escape(">"));
@@ -2650,18 +2511,14 @@ public final class Slice {
             @Override
             public Void visitIntersection(IntersectionType t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
                     String sep = "";
                     for (TypeMirror b : t.getBounds()) {
                         out.accept(enclosedOutCtxt.escape(sep));
                         sep = " | ";
-                        writeTypeReference(out,
-                                           enclosedOutCtxt,
-                                           b,
+                        writeTypeReference(out, enclosedOutCtxt, b,
                                            LinkContent.NORMAL);
                     }
                 }
@@ -2671,9 +2528,7 @@ public final class Slice {
             @Override
             public Void visitTypeVariable(TypeVariable t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
                     TypeParameterElement tpe =
@@ -2695,17 +2550,13 @@ public final class Slice {
                         if (redundantLink) out.accept("redundant-link ");
                         out.accept(enclosedOutCtxt
                             .escapeAttribute(DocUtils.getStyleClass(tpeCont)));
-                        DocUtils
-                            .writeModifierStyleClasses(out,
-                                                       enclosedOutCtxt
-                                                           .inAttribute(),
-                                                       tpeCont.getModifiers());
+                        DocUtils.writeModifierStyleClasses(out, enclosedOutCtxt
+                            .inAttribute(), tpeCont.getModifiers());
                         out.accept("\" title=\"");
                         Properties titleProps = new Properties();
                         config.setElementProperties(titleProps, tpeCont);
                         out.accept(Slice.this
-                            .macroFormat("link.title.element",
-                                         titleProps,
+                            .macroFormat("link.title.element", titleProps,
                                          enclosedOutCtxt.attributeEscaper()));
                         if (makeLink) {
                             out.accept("\" href=\"");
@@ -2714,8 +2565,7 @@ public final class Slice {
                         out.accept("\">");
                     }
 
-                    Slice.writeCamelText(out,
-                                         enclosedOutCtxt,
+                    Slice.writeCamelText(out, enclosedOutCtxt,
                                          tpe.getSimpleName());
                     // out.accept(enclosedOutCtxt.escape(t.toString()));
 
@@ -2733,9 +2583,7 @@ public final class Slice {
                         assert lb != null;
                         if (lb.getKind() != TypeKind.NULL) {
                             out.accept(tvCtxt.escape(" super "));
-                            writeTypeReference(out,
-                                               tvCtxt,
-                                               lb,
+                            writeTypeReference(out, tvCtxt, lb,
                                                LinkContent.NORMAL);
                         }
 
@@ -2743,9 +2591,7 @@ public final class Slice {
                         if (!config.types.isSameType(ub,
                                                      config.javaLangObject)) {
                             out.accept(tvCtxt.escape(" extends "));
-                            writeTypeReference(out,
-                                               tvCtxt,
-                                               ub,
+                            writeTypeReference(out, tvCtxt, ub,
                                                LinkContent.NORMAL);
                         }
                     }
@@ -2756,9 +2602,7 @@ public final class Slice {
             @Override
             public Void visitWildcard(WildcardType t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
                     out.accept(enclosedOutCtxt.escape("?"));
@@ -2766,18 +2610,14 @@ public final class Slice {
                     TypeMirror lb = t.getSuperBound();
                     if (lb != null) {
                         out.accept(enclosedOutCtxt.escape(" super "));
-                        writeTypeReference(out,
-                                           enclosedOutCtxt,
-                                           lb,
+                        writeTypeReference(out, enclosedOutCtxt, lb,
                                            LinkContent.NORMAL);
                     }
 
                     TypeMirror ub = t.getExtendsBound();
                     if (ub != null) {
                         out.accept(enclosedOutCtxt.escape(" extends "));
-                        writeTypeReference(out,
-                                           enclosedOutCtxt,
-                                           ub,
+                        writeTypeReference(out, enclosedOutCtxt, ub,
                                            LinkContent.NORMAL);
                     }
                 }
@@ -2787,9 +2627,7 @@ public final class Slice {
             @Override
             public Void visitNoType(NoType t, Void p) {
                 if (detail.hasLabel()) {
-                    toHypertext(out,
-                                detail.sourceContext(),
-                                enclosedOutCtxt,
+                    toHypertext(out, detail.sourceContext(), enclosedOutCtxt,
                                 detail.label());
                 } else {
                     out.accept(enclosedOutCtxt.escape(t.toString()));
@@ -2880,11 +2718,8 @@ public final class Slice {
         writeSummaryAsHypertextDescription(Consumer<? super CharSequence> out,
                                            OutputContext outCtxt,
                                            Element elem) {
-        return writeSummary(out,
-                            outCtxt.inAttribute(),
-                            elem,
-                            () -> out.accept("<meta name=\"description\""
-                                + " content=\""),
+        return writeSummary(out, outCtxt.inAttribute(), elem, () -> out
+            .accept("<meta name=\"description\"" + " content=\""),
                             () -> out.accept("\">\n"));
     }
 
@@ -2995,10 +2830,8 @@ public final class Slice {
         if (fs == null) return false;
         if (fs.isEmpty()) return false;
         if (beforeOkay != null) beforeOkay.run();
-        toHypertext(out,
-                    SourceContext.forElement(elem).inFirstSentence(),
-                    outCtxt,
-                    fs);
+        toHypertext(out, SourceContext.forElement(elem).inFirstSentence(),
+                    outCtxt, fs);
         if (afterOkay != null) afterOkay.run();
         return true;
     }
@@ -3073,12 +2906,10 @@ public final class Slice {
                 assert candType != null;
                 for (ExecutableElement candMeth : ElementFilter
                     .methodsIn(candType.getEnclosedElements())) {
-                    if (!config.elements
-                        .overrides(execElem, candMeth, typeElem)) continue;
-                    if (writeDirectSummary(out,
-                                           outCtxt,
-                                           candMeth,
-                                           beforeOkay,
+                    if (!config.elements.overrides(execElem, candMeth,
+                                                   typeElem))
+                        continue;
+                    if (writeDirectSummary(out, outCtxt, candMeth, beforeOkay,
                                            afterOkay))
                         return true;
                     break;
@@ -3087,10 +2918,7 @@ public final class Slice {
         } else {
             /* We are searching for a superclass with documentation. */
             for (TypeElement candType : cands) {
-                if (writeDirectSummary(out,
-                                       outCtxt,
-                                       candType,
-                                       beforeOkay,
+                if (writeDirectSummary(out, outCtxt, candType, beforeOkay,
                                        afterOkay))
                     return true;
             }
@@ -3340,9 +3168,7 @@ public final class Slice {
             Counter nameCounter = new Counter();
             if (values.size() > 1) {
                 writeElementReference(out::append, ctxt, exec, nameContent);
-                writeElementReference(nameCounter::accept,
-                                      nameCtxt,
-                                      exec,
+                writeElementReference(nameCounter::accept, nameCtxt, exec,
                                       nameContent);
                 out.print(ctxt.escape("="));
                 nameCounter.sum++;
@@ -3457,9 +3283,7 @@ public final class Slice {
 
             @Override
             public Void visitEnumConstant(VariableElement c, Void p) {
-                writeElementReference(out::append,
-                                      ctxt,
-                                      c,
+                writeElementReference(out::append, ctxt, c,
                                       LinkContent.NORMAL.withoutContainers());
                 return null;
             }
@@ -3560,9 +3384,7 @@ public final class Slice {
     public OutputContext getBlockContext(URI location, Element elem) {
         /* TODO: Use in package/class/member generation. */
         return OutputContext
-            .forBlock(config.types,
-                      location,
-                      elem,
+            .forBlock(config.types, location, elem,
                       HypertextEscaper.forCData(spec.charset),
                       HypertextEscaper.forAttributes(spec.charset));
     }

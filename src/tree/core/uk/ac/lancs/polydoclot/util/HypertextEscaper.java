@@ -43,7 +43,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-
 import uk.ac.lancs.polydoclot.Slice;
 
 /**
@@ -55,6 +54,7 @@ import uk.ac.lancs.polydoclot.Slice;
  */
 public final class HypertextEscaper implements Escaper {
     private final CharsetEncoder encoder;
+
     private final boolean doubleQuotes;
 
     private HypertextEscaper(Charset charset, boolean doubleQuotes) {
@@ -98,10 +98,13 @@ public final class HypertextEscaper implements Escaper {
             case '"':
                 if (!doubleQuotes) break;
                 return "&quot;".codePoints();
+
             case '&':
                 return "&amp;".codePoints();
+
             case '<':
                 return "&lt;".codePoints();
+
             case '>':
                 return "&gt;".codePoints();
             }

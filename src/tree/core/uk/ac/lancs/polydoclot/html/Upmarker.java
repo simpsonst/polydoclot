@@ -47,9 +47,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
-
 import javax.lang.model.element.Element;
-
 import uk.ac.lancs.polydoclot.util.Utils;
 
 /**
@@ -76,18 +74,22 @@ public abstract class Upmarker {
         frozenStringSet("br", "img", "link", "meta");
 
     @SuppressWarnings("serial")
-    private static final Map<String, Collection<String>> IMPLICITLY_CLOSED_ELEMENTS =
-        Collections
-            .unmodifiableMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER) {
-                private void putMulti(String key, String... members) {
-                    put(key, frozenStringSet(members));
-                }
+    private static final Map<String,
+                             Collection<String>> IMPLICITLY_CLOSED_ELEMENTS =
+                                 Collections
+                                     .unmodifiableMap(new TreeMap<>(String.CASE_INSENSITIVE_ORDER) {
+                                         private void
+                                             putMulti(String key,
+                                                      String... members) {
+                                             put(key, frozenStringSet(members));
+                                         }
 
-                {
-                    putMulti("div", "p", "span", "code", "samp", "b", "u",
-                             "strong", "em");
-                }
-            });
+                                         {
+                                             putMulti("div", "p", "span",
+                                                      "code", "samp", "b", "u",
+                                                      "strong", "em");
+                                         }
+                                     });
 
     private static boolean isEmptyElement(String tagName) {
         return EMPTY_ELEMENTS.contains(tagName);
@@ -329,8 +331,7 @@ public abstract class Upmarker {
 
     final Upmarker intoString(Consumer<? super CharSequence> out) {
         Consumer<? super IntStream> is = s -> {
-            s.forEach(cp -> out
-                .accept(String.valueOf(Character.toChars(cp))));
+            s.forEach(cp -> out.accept(String.valueOf(Character.toChars(cp))));
         };
         return intoStream(is);
     }
@@ -367,6 +368,7 @@ public abstract class Upmarker {
 
         private final Map<String, Consumer<? super Upmarker>> attrs =
             new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
         private final Map<String, Predicate<? super Upmarker>> flags =
             new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -479,8 +481,9 @@ public abstract class Upmarker {
                     entry.getValue().accept(ctxt);
                     write('"');
                 }
-                for (Map.Entry<String, Predicate<? super Upmarker>> entry : flags
-                    .entrySet()) {
+                for (Map.Entry<String,
+                               Predicate<? super Upmarker>> entry : flags
+                                   .entrySet()) {
                     if (!entry.getValue().test(ctxt)) continue;
                     write(' ');
                     write(entry.getKey());

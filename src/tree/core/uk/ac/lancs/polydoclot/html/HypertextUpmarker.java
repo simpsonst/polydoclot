@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
-
 import javax.lang.model.element.Element;
 
 /**
@@ -117,12 +116,16 @@ final class HypertextUpmarker extends Upmarker {
                 switch (c) {
                 default:
                     return IntStream.of(c);
+
                 case '<':
                     return "&lt;".codePoints();
+
                 case '>':
                     return "&gt;".codePoints();
+
                 case '&':
                     return "&amp;".codePoints();
+
                 case '"':
                     return "&quot;".codePoints();
                 }
@@ -214,6 +217,7 @@ final class HypertextUpmarker extends Upmarker {
     }
 
     private final Consumer<? super IntStream> out;
+
     private final URI location;
 
     HypertextUpmarker(Consumer<? super IntStream> out, URI location) {
@@ -232,10 +236,13 @@ final class HypertextUpmarker extends Upmarker {
             switch (c) {
             default:
                 return IntStream.of(c);
+
             case '<':
                 return "&lt;".codePoints();
+
             case '>':
                 return "&gt;".codePoints();
+
             case '&':
                 return "&amp;".codePoints();
             }

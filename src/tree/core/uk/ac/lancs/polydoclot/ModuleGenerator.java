@@ -36,19 +36,17 @@
 
 package uk.ac.lancs.polydoclot;
 
+import com.sun.source.doctree.DocCommentTree;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
-
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ModuleElement;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-
-import com.sun.source.doctree.DocCommentTree;
 
 /**
  * Generates documentation for modules.
@@ -57,6 +55,7 @@ import com.sun.source.doctree.DocCommentTree;
  */
 public class ModuleGenerator {
     private final Slice slice;
+
     private final Configuration config;
 
     /**
@@ -79,15 +78,14 @@ public class ModuleGenerator {
              * working on them. */
             if (module.isUnnamed()) continue;
             if (config.excludedElements.contains(module)) continue;
-            config.diagnostic("output.module.item",
-                              module.getQualifiedName());
+            config.diagnostic("output.module.item", module.getQualifiedName());
 
             /* Work out where this module's documentation goes, both
              * internally and externally. */
             final URI moduleLocation = config.locateElement(module);
-            final Path moduleFile = config.outputDirectory.resolve(module
-                .getQualifiedName().toString().replace('.', '$') + "-module"
-                + config.hypertextFileSuffix);
+            final Path moduleFile = config.outputDirectory
+                .resolve(module.getQualifiedName().toString().replace('.', '$')
+                    + "-module" + config.hypertextFileSuffix);
             final OutputContext blockCtxt =
                 slice.getBlockContext(moduleLocation, module);
 
@@ -108,8 +106,7 @@ public class ModuleGenerator {
                 out.printf("<head>\n");
                 slice.writeHypertextMeta(out, blockCtxt);
                 out.printf("<title>%s</title>\n",
-                           slice.macroFormat("page.title.package",
-                                             moduleProps,
+                           slice.macroFormat("page.title.package", moduleProps,
                                              blockCtxt.escaper()));
                 slice.writeSummaryAsHypertextDescription(out::append,
                                                          blockCtxt
@@ -126,13 +123,11 @@ public class ModuleGenerator {
                 out.printf("<div class=\"javadoc-head\">\n");
                 out.printf("<h1><span>%s</span></h1>\n",
                            slice.toHypertext(inCtxt, blockCtxt, slice
-                               .macroFormatDoc("page.heading.module",
-                                               blockCtxt.escaper()
-                                                   .escape(moduleProps))));
+                               .macroFormatDoc("page.heading.module", blockCtxt
+                                   .escaper().escape(moduleProps))));
                 out.printf("<div class=\"javadoc-purpose\"><span>");
-                slice.writeSummaryOrSyntheticDescription(out::append,
-                                                         blockCtxt, inCtxt,
-                                                         module);
+                slice.writeSummaryOrSyntheticDescription(out::append, blockCtxt,
+                                                         inCtxt, module);
                 out.printf("</span></div>\n");
 
                 slice.writeElementQualities(out, blockCtxt, module);
@@ -144,8 +139,7 @@ public class ModuleGenerator {
                 if (!annots.isEmpty()) {
                     out.printf("<div class=\"javadoc-context\">\n");
                     out.printf("<pre class=\"java\">\n");
-                    slice.writeAnnotationMirrors(out, blockCtxt, annots, "",
-                                                 2);
+                    slice.writeAnnotationMirrors(out, blockCtxt, annots, "", 2);
                     out.print("module ");
                     out.print(blockCtxt.escape(module.getQualifiedName()));
                     out.print(";");
@@ -172,15 +166,14 @@ public class ModuleGenerator {
                 slice.writeAuthorSection(out, inCtxt, blockCtxt, docs);
 
                 out.printf("</div>\n");
-                slice.writeUserSection(out, blockCtxt, "aftmatter",
-                                       "aftmatter", module);
+                slice.writeUserSection(out, blockCtxt, "aftmatter", "aftmatter",
+                                       module);
 
                 out.printf("</body>\n");
                 out.printf("</html>\n");
             } catch (IOException e1) {
-                config.report(Kind.ERROR, module,
-                              "output.module.failure.write", e1.getMessage(),
-                              moduleFile);
+                config.report(Kind.ERROR, module, "output.module.failure.write",
+                              e1.getMessage(), moduleFile);
                 return;
             }
         }
