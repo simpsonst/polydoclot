@@ -2923,14 +2923,10 @@ public final class Slice {
                    outCtxt.escapeAttribute(spec.charset.toString()));
         out.printf("<meta name=\"schema.ssm\" content=\"%s\">\n",
                    "http://standard-sitemap.org/2007/ns");
-        out.printf("<link rel=\"ssm.location\" href=\"%s\">\n",
-                   Utils.relativize(outCtxt.location(),
-                                    URI.create("standard-sitemap.xml")));
-        if (withStart)
-            out.printf("<link rel=\"start\" href=\"%s\">\n",
-                       Utils.relativize(outCtxt.location(),
-                                        URI.create("overview-summary"
-                                            + config.hypertextLinkSuffix)));
+        out.printf("<link rel=\"ssm.location\" href=\"%s\">\n", Utils
+            .relativize(outCtxt.location(), config.locateSitemap()));
+        if (withStart) out.printf("<link rel=\"start\" href=\"%s\">\n", Utils
+            .relativize(outCtxt.location(), config.locateOverview()));
     }
 
     /**

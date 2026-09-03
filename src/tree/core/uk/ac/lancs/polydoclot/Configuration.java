@@ -1874,7 +1874,8 @@ public final class Configuration {
      * @param outCtxt the output context for writing the element
      */
     public void writeStyleLinks(PrintWriter out, OutputContext outCtxt) {
-        URI defaultLoc = URI.create(MetadataGenerator.DEFAULT_STYLES_NAME);
+        URI defaultLoc = outputDirectory.toUri()
+            .resolve(MetadataGenerator.DEFAULT_STYLES_NAME);
         out.printf("<link rel=\"stylesheet\"" + " type=\"text/css\""
             + " href=\"%s\">\n",
                    outCtxt.escapeAttribute(Utils
@@ -2513,6 +2514,15 @@ public final class Configuration {
     }
 
     /**
+     * Get the internal URI of the sitemap.
+     * 
+     * @return the URI of the sitemap
+     */
+    public URI locateSitemap() {
+        return outputDirectory.toUri().resolve("standard-sitemap.xml");
+    }
+
+    /**
      * Get the internal URI of the overview page.
      * 
      * @return the URI of the overview
@@ -2521,7 +2531,8 @@ public final class Configuration {
      * the value of {@link #hypertextFileSuffix}.
      */
     public URI locateOverview() {
-        return URI.create("overview-summary" + hypertextLinkSuffix);
+        return outputDirectory.toUri()
+            .resolve("overview-summary" + hypertextLinkSuffix);
     }
 
     /**
