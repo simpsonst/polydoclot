@@ -44,6 +44,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -174,7 +175,7 @@ public final class MetadataGenerator {
         try (InputStream in =
             getClass().getResourceAsStream("default-styles.css")) {
             try {
-                Files.copy(in, defStyles);
+                Files.copy(in, defStyles, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ex) {
                 report("output.default-stylesheet.failure.copy", ex,
                        defStyles);
