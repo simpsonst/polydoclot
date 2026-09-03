@@ -2528,7 +2528,8 @@ public final class Configuration {
      * @return the URI of the overview
      * 
      * @default This returns <samp>overview-summary</samp> appended with
-     * the value of {@link #hypertextFileSuffix}.
+     * the value of {@link #hypertextFileSuffix}, in the output
+     * directory.
      */
     public URI locateOverview() {
         return outputDirectory.toUri()
