@@ -485,6 +485,7 @@ public final class Slice {
                 case CLASS:
                 case ENUM:
                 case INTERFACE:
+                case RECORD:
                 case ANNOTATION_TYPE:
                     typeCtxt = (TypeElement) inCtxt.element();
                     methCtxt = null;
@@ -2639,16 +2640,9 @@ public final class Slice {
         if (putInCodeBlock) out.accept("</code>");
     }
 
-    /**
-     * Interpret localized content as a Javadoc comment.
-     * 
-     * @param key the key identifying the content
-     * 
-     * @return a sequence of documentation trees representing the
-     * content
-     */
-    public final List<? extends DocTree> getTreeContent(String key) {
-        String rawText = "<body>" + contentBundle.getString(key) + "</body>";
+    private final List<? extends DocTree> toTreeContent(String key,
+                                                        CharSequence text) {
+        String rawText = "<body>" + text + "</body>";
         FileObject file = new FileObject() {
             @Override
             public URI toUri() {
@@ -2699,6 +2693,27 @@ public final class Slice {
         };
         DocCommentTree tree = config.docTrees.getDocCommentTree(file);
         return tree.getFullBody();
+
+    }
+
+    public final List<? extends DocTree>
+        getFormattedTreeContent(String key, String... fields) {
+        var fmtText = contentBundle.getString(key);
+        var fmt = new MessageFormat(fmtText, spec.locale);
+        var exp = fmt.format(fields);
+        return toTreeContent(key, exp);
+    }
+
+    /**
+     * Interpret localized content as a Javadoc comment.
+     * 
+     * @param key the key identifying the content
+     * 
+     * @return a sequence of documentation trees representing the
+     * content
+     */
+    public final List<? extends DocTree> getTreeContent(String key) {
+        return toTreeContent(key, contentBundle.getString(key));
     }
 
     /**
@@ -2848,6 +2863,10 @@ public final class Slice {
      * 
      * @param elem the element to be summarized
      * 
+     * @param recMemb the record component accessed by the element to be
+     * summarized; or {@code null} if the element is not a component
+     * accessor
+     * 
      * @param beforeOkay an action to perform before writing the summary
      * if one is found
      * 
@@ -2873,6 +2892,7 @@ public final class Slice {
         case INTERFACE:
         case CLASS:
         case ENUM:
+        case RECORD:
         case ANNOTATION_TYPE:
             /* If the element is class, investigate base classes and
              * interfaces. */
@@ -2972,7 +2992,7 @@ public final class Slice {
     /**
      * Get a synthetic description for a whole element if available.
      * This is used for default constructors, and some generated
-     * enumeration methods.
+     * enumeration/record methods.
      * 
      * @param elem the element in question
      * 
@@ -3004,12 +3024,21 @@ public final class Slice {
             VariableElement paramElem = (VariableElement) elem;
             if (config.isEnumValueOf(paramElem.getEnclosingElement())) {
                 return getTreeContent("synth.enum.value-of.name");
-
+            } else if (config.isObjectEquals(paramElem.getEnclosingElement())) {
+                return getTreeContent("synth.object.equals.o");
             }
+
+            /* If this is a parameter of a default constructor for a
+             * record, use the @param for the same name in the record's
+             * documentation. */
+            ParamTree recCompDoc =
+                config.getRecordComponentDocsForConstructorParam(paramElem);
+            if (recCompDoc != null) return recCompDoc.getDescription();
         }
             break;
 
         case METHOD: {
+            var recMemb = config.accessed.get(elem);
             if (config.isEnumValueOf(elem)) {
                 if (kind == null) return getTreeContent("synth.enum.value-of");
                 switch (kind) {
@@ -3028,6 +3057,61 @@ public final class Slice {
                 case RETURN:
                     return getTreeContent("synth.enum.values.return");
                 }
+            } else if (config.isObjectEquals(elem)) {
+                if (kind == null) return getTreeContent("synth.object.equals");
+                switch (kind) {
+                default:
+                    break;
+
+                case RETURN:
+                    return getTreeContent("synth.object.equals.return");
+                }
+            } else if (config.isObjectToString(elem)) {
+                if (kind == null)
+                    return getTreeContent("synth.object.toString");
+                switch (kind) {
+                default:
+                    break;
+
+                case RETURN:
+                    return getTreeContent("synth.object.toString.return");
+                }
+            } else if (config.isObjectHashCode(elem)) {
+                if (kind == null)
+                    return getTreeContent("synth.object.hashCode");
+                switch (kind) {
+                default:
+                    break;
+
+                case RETURN:
+                    return getTreeContent("synth.object.hashCode.return");
+                }
+            } else if (recMemb != null) {
+                if (kind == null) {
+                    /* TODO: As the second string, extract the docs for
+                     * the record component. If they're not directly
+                     * accessible, get the containing class's docs, and
+                     * look for the @param for the simple name. */
+                    DocCommentTree rootDoc = config.docTrees
+                        .getDocCommentTree(elem.getEnclosingElement());
+                    ParamTree pdoc = DocUtils.findParameter(rootDoc, recMemb
+                        .getSimpleName().toString(), false);
+                    var descr = pdoc.getDescription().stream()
+                        .map(Object::toString).collect(Collectors.joining());
+                    var r =
+                        getFormattedTreeContent("synth.record.accessor", recMemb
+                            .getSimpleName().toString(), descr);
+                    return r;
+                }
+                switch (kind) {
+                default:
+                    break;
+
+                case RETURN:
+                    return getFormattedTreeContent("synth.record.accessor.return",
+                                                   recMemb.getSimpleName()
+                                                       .toString());
+                }
             }
         }
             break;
@@ -3036,6 +3120,10 @@ public final class Slice {
             ExecutableElement execElem = (ExecutableElement) elem;
             if (execElem.getParameters().isEmpty())
                 return getTreeContent("synth.default-constr");
+            if (config.isDefaultRecordConstructor(execElem)) {
+                if (kind == null)
+                    return getTreeContent("synth.record.default-constr");
+            }
         }
             break;
 

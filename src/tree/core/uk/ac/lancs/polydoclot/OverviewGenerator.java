@@ -432,6 +432,7 @@ public final class OverviewGenerator {
         case ENUM:
         case INTERFACE:
         case ANNOTATION_TYPE:
+        case RECORD:
             return (TypeElement) elem;
 
         default:

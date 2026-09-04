@@ -63,6 +63,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.RecordComponentElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
@@ -186,6 +187,7 @@ public final class ClassGenerator {
                     Element enc = typeDef.getEnclosingElement();
                     if (enc == null) break;
                     switch (enc.getKind()) {
+                    case RECORD:
                     case ENUM:
                     case CLASS:
                     case INTERFACE:
@@ -273,6 +275,7 @@ public final class ClassGenerator {
                 out.printf("</div>\n");
 
                 /* Catalogue all members. */
+                List<RecordComponentElement> recordMembers = new ArrayList<>();
                 List<TypeElement> staticClasses = new ArrayList<>();
                 List<TypeElement> innerClasses = new ArrayList<>();
                 List<VariableElement> instanceFields = new ArrayList<>();
@@ -289,6 +292,7 @@ public final class ClassGenerator {
                     if (config.excludedElements.contains(memb)) continue;
 
                     switch (memb.getKind()) {
+                    case RECORD:
                     case CLASS:
                     case INTERFACE:
                     case ANNOTATION_TYPE:
@@ -296,6 +300,10 @@ public final class ClassGenerator {
                         (memb.getModifiers().contains(Modifier.STATIC) ?
                             staticClasses : innerClasses)
                             .add((TypeElement) memb);
+                        break;
+
+                    case RECORD_COMPONENT:
+                        recordMembers.add((RecordComponentElement) memb);
                         break;
 
                     case ENUM_CONSTANT:
@@ -1190,6 +1198,7 @@ public final class ClassGenerator {
     void writeTypeParams(PrintWriter out, OutputContext outCtxt, Element elem) {
         final List<? extends TypeParameterElement> tps;
         switch (elem.getKind()) {
+        case RECORD:
         case CLASS:
         case ENUM:
         case INTERFACE:
@@ -1298,6 +1307,7 @@ public final class ClassGenerator {
         final VariableElement varElem;
         final TypeElement typeElem;
         switch (elem.getKind()) {
+        case RECORD:
         case CLASS:
         case ENUM:
         case ANNOTATION_TYPE:

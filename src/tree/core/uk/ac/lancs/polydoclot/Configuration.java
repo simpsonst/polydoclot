@@ -92,11 +92,13 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.ModuleElement;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.RecordComponentElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.NoType;
+import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -172,6 +174,10 @@ public final class Configuration {
      * A representation of the type {@link Enum}
      */
     public final TypeMirror javaLangEnum;
+
+    public final PrimitiveType primitiveInt;
+
+    public final PrimitiveType primitiveBoolean;
 
     /**
      * Tools for manipulating and examining types
@@ -381,6 +387,8 @@ public final class Configuration {
      * Background jobs should be invoked on this executor.
      */
     public final ExecutorService executor = Executors.newCachedThreadPool();
+
+    public final Map<ExecutableElement, RecordComponentElement> accessed;
 
     /**
      * Get a localized diagnostic message with replaced arguments.
@@ -620,6 +628,8 @@ public final class Configuration {
             this.elements.getTypeElement("java.lang.Deprecated").asType();
         this.javaLangObject =
             this.elements.getTypeElement("java.lang.Object").asType();
+        this.primitiveInt = this.types.getPrimitiveType(TypeKind.INT);
+        this.primitiveBoolean = this.types.getPrimitiveType(TypeKind.BOOLEAN);
         this.javaLangString =
             this.elements.getTypeElement("java.lang.String").asType();
         this.javaLangEnum =
@@ -937,6 +947,9 @@ public final class Configuration {
         {
 
             class ElementScanner {
+                Map<ExecutableElement, RecordComponentElement> accessed =
+                    new HashMap<>();
+
                 Map<Element, ElementQualities> cache = new HashMap<>();
 
                 private Map<TypeElement, List<TypeElement>> ancestors =
@@ -948,6 +961,7 @@ public final class Configuration {
                     case ENUM:
                     case CLASS:
                     case INTERFACE:
+                    case RECORD:
                     case ANNOTATION_TYPE:
                         type = (TypeElement) elem;
                         break;
@@ -956,6 +970,7 @@ public final class Configuration {
                     case ENUM_CONSTANT:
                     case CONSTRUCTOR:
                     case FIELD:
+                    case RECORD_COMPONENT:
                         type = (TypeElement) elem.getEnclosingElement();
                         break;
 
@@ -1032,6 +1047,7 @@ public final class Configuration {
                     case ENUM:
                     case CLASS:
                     case INTERFACE:
+                    case RECORD:
                     case ANNOTATION_TYPE:
                         /* Check ancestor classes. If any is deprecated,
                          * we deprecate this one is too. */
@@ -1088,6 +1104,7 @@ public final class Configuration {
 
                         break;
 
+                    case RECORD_COMPONENT:
                     case CONSTRUCTOR:
                     case FIELD:
                         break;
@@ -1123,6 +1140,7 @@ public final class Configuration {
                     switch (elem.getKind()) {
                     case ENUM:
                     case CLASS:
+                    case RECORD:
                     case INTERFACE:
                     case ANNOTATION_TYPE:
                         /* Check ancestor classes. If any is
@@ -1165,6 +1183,7 @@ public final class Configuration {
                          * excluded. */
                         break;
 
+                    case RECORD_COMPONENT:
                     case CONSTRUCTOR:
                     case FIELD:
                         break;
@@ -1184,9 +1203,17 @@ public final class Configuration {
                     case CLASS:
                     case INTERFACE:
                     case ENUM:
+                    case RECORD:
                     case ANNOTATION_TYPE:
                         if (!env.getIncludedElements().contains(elem))
                             return null;
+                        break;
+
+                    case RECORD_COMPONENT: {
+                        var recComp = (RecordComponentElement) elem;
+                        ExecutableElement accessor = recComp.getAccessor();
+                        accessed.put(accessor, recComp);
+                    }
                         break;
 
                     case METHOD:
@@ -1248,6 +1275,7 @@ public final class Configuration {
                 .filter(e -> e.getValue().deprecation == Deprecation.IMPLIED)
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> Collections
                     .unmodifiableCollection(e.getValue().deprecators)));
+            this.accessed = scanner.accessed;
         }
 
         /* Get package groupings. */
@@ -2709,6 +2737,7 @@ public final class Configuration {
         case CONSTRUCTOR:
         case METHOD:
         case ENUM_CONSTANT:
+        case RECORD_COMPONENT:
         case FIELD:
             elem = elem.getEnclosingElement();
             break;
@@ -2750,6 +2779,10 @@ public final class Configuration {
             String clsName = cls.toString();
             props.setProperty("CLASS", clsName);
             switch (bottom) {
+            case RECORD:
+                props.setProperty("REC", clsName);
+                break;
+
             case ENUM:
                 props.setProperty("ENUM", clsName);
                 break;
@@ -3007,6 +3040,93 @@ public final class Configuration {
 
     /**
      * Determine whether an element is the synthetic
+     * {@code equals(Object)} (such as of a record type).
+     * 
+     * @param elem the candidate element
+     * 
+     * @return {@code true} if the candidate element is the identified
+     * method
+     */
+    public boolean isObjectEquals(Element elem) {
+        if (elem.getKind() != ElementKind.METHOD) return false;
+        ExecutableElement execElem = (ExecutableElement) elem;
+        if (!execElem.getSimpleName().toString().equals("equals")) return false;
+        if (!types.isSameType(primitiveBoolean, execElem.getReturnType()))
+            return false;
+        List<? extends VariableElement> params = execElem.getParameters();
+        if (params.size() != 1) return false;
+        if (!types.isSameType(javaLangObject, params.get(0).asType()))
+            return false;
+        return true;
+    }
+
+    public boolean isDefaultRecordConstructor(Element elem) {
+        if (elem.getKind() != ElementKind.CONSTRUCTOR) return false;
+        ExecutableElement execElem = (ExecutableElement) elem;
+        TypeElement recElem = (TypeElement) elem.getEnclosingElement();
+        var comps = recElem.getRecordComponents();
+        List<? extends VariableElement> params = execElem.getParameters();
+        final int len = params.size();
+        if (len != comps.size()) return false;
+        for (int i = 0; i < len; i++) {
+            var pt = params.get(i).asType();
+            var ct = comps.get(i).asType();
+            if (!types.isSameType(ct, pt)) return false;
+        }
+        return true;
+    }
+
+    public ParamTree
+        getRecordComponentDocsForConstructorParam(VariableElement elem) {
+        var encl = elem.getEnclosingElement();
+        if (encl.getKind() != ElementKind.CONSTRUCTOR) return null;
+        var recElem = (TypeElement) encl.getEnclosingElement();
+        var recDoc = docTrees.getDocCommentTree(recElem);
+        return DocUtils.findParameter(recDoc, elem.getSimpleName(), false);
+    }
+
+    /**
+     * Determine whether an element is the synthetic {@code toString()}
+     * (such as of a record type).
+     * 
+     * @param elem the candidate element
+     * 
+     * @return {@code true} if the candidate element is the identified
+     * method
+     */
+    public boolean isObjectToString(Element elem) {
+        if (elem.getKind() != ElementKind.METHOD) return false;
+        ExecutableElement execElem = (ExecutableElement) elem;
+        if (!execElem.getSimpleName().toString().equals("toString"))
+            return false;
+        if (!types.isSameType(javaLangString, execElem.getReturnType()))
+            return false;
+        List<? extends VariableElement> params = execElem.getParameters();
+        return params.isEmpty();
+    }
+
+    /**
+     * Determine whether an element is the synthetic {@code hashCode()}
+     * (such as of a record type).
+     * 
+     * @param elem the candidate element
+     * 
+     * @return {@code true} if the candidate element is the identified
+     * method
+     */
+    public boolean isObjectHashCode(Element elem) {
+        if (elem.getKind() != ElementKind.METHOD) return false;
+        ExecutableElement execElem = (ExecutableElement) elem;
+        if (!execElem.getSimpleName().toString().equals("hashCode"))
+            return false;
+        if (!types.isSameType(primitiveInt, execElem.getReturnType()))
+            return false;
+        List<? extends VariableElement> params = execElem.getParameters();
+        return params.isEmpty();
+    }
+
+    /**
+     * Determine whether an element is the synthetic
      * {@code Enum.valueOf(String)} method of an enumeration type. Only
      * the enclosing type, the return type and the parameter list are
      * checked.
@@ -3154,6 +3274,7 @@ public final class Configuration {
         case ANNOTATION_TYPE:
         case INTERFACE:
         case ENUM:
+        case RECORD:
             break;
 
         default:

@@ -286,6 +286,10 @@ public final class PackageGenerator {
                         kindKey = "enum";
                         break;
 
+                    case RECORD:
+                        kindKey = "record";
+                        break;
+
                     case ANNOTATION_TYPE:
                         kindKey = "annot";
                         break;

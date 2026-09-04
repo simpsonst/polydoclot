@@ -159,6 +159,7 @@ public final class DocUtils {
             case ANNOTATION_TYPE:
             case CLASS:
             case INTERFACE:
+            case RECORD:
             case ENUM:
                 result.insert(0, '.');
                 result.insert(0, enc.getSimpleName());
