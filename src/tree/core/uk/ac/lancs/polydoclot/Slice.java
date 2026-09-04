@@ -1268,6 +1268,23 @@ public final class Slice {
         out.printf("\">\n");
         out.printf("<caption>%s</caption>\n", blockCtxt
             .escape(getContent("section.heading.class-hierarchy")));
+        out.printf("<colgroup class=\"class\">\n");
+        for (int i = 0; i < depth; i++)
+            out.printf("<col />\n");
+        out.printf("</colgroup>\n");
+        out.printf("<colgroup span=\"1\" class=\"extend\" />\n");
+        out.printf("<colgroup span=\"1\" class=\"purpose\" />\n");
+        out.printf("<thead>\n");
+        out.printf("<tr>\n");
+        out.printf("<th class=\"class\" colspan=\"%d\">%s</th>\n", depth,
+                   blockCtxt
+                       .escape(getContent("class-hierarchy.column.class")));
+        out.printf("<th class=\"extensible\">%s</th>\n", blockCtxt
+            .escape(getContent("class-hierarchy.column.extensible")));
+        out.printf("<th class=\"purpose\">%s</th>\n", blockCtxt
+            .escape(getContent("class-hierarchy.column.purpose")));
+        out.printf("</tr>\n");
+        out.printf("</thead>\n");
         out.printf("<tbody>\n");
         writeSubtypes(out, blockCtxt, config.knownDirectSubtypes, depth,
                       new AtomicBoolean(false), 0, roots);
@@ -1298,6 +1315,16 @@ public final class Slice {
             writeElementReference(out::append, blockCtxt, root,
                                   LinkContent.NORMAL);
             out.printf("</td>");
+            if (root.getModifiers().contains(Modifier.FINAL)) {
+                out.printf(" <td class=\"extensible final\">%s</td>", blockCtxt
+                    .escape(getContent("class-hierarchy.column.extensible.final")));
+            } else if (root.getModifiers().contains(Modifier.SEALED)) {
+                out.printf(" <td class=\"extensible sealed\">%s</td>", blockCtxt
+                    .escape(getContent("class-hierarchy.column.extensible.sealed")));
+            } else {
+                out.printf(" <td class=\"extensible extend\">%s</td>", blockCtxt
+                    .escape(getContent("class-hierarchy.column.extensible.extend")));
+            }
             out.printf(" <td class=\"purpose\">");
             writeSummary(out::append, blockCtxt, root);
             out.printf("</td></tr>\n");

@@ -42,8 +42,13 @@ body.javadoc .javadoc-class-list > * > tr > .name,
 body.javadoc .javadoc-class-list > * > tr > .purpose,
 body.javadoc .javadoc-qualities > tbody > tr > .value,
 body.javadoc .javadoc-hierarchy > tbody > tr > .link,
+body.javadoc .javadoc-hierarchy > * > tr > .class,
 body.javadoc .javadoc-hierarchy > * > tr > .purpose {
     text-align: left;
+}
+
+body.javadoc .javadoc-hierarchy > * > tr > .extensible {
+    text-align: center;
 }
 
 body.javadoc .javadoc-terminals > * > tr > *,
