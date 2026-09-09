@@ -3255,6 +3255,31 @@ public final class Configuration {
     }
 
     /**
+     * Identify the jar file containing an element. This uses
+     * information from the <kbd>-jardirs</kbd> option.
+     * 
+     * @implNote This is accomplished by first calling
+     * {@link #locateSource(Element)}, yielding a {@link Path}. If this
+     * path is in {@link #dirToJar}, what it maps to is the result.
+     * otherwise, the parent path is checked, then its parent, and so
+     * on.
+     * 
+     * @param elem the element whose jar is sought
+     * 
+     * @return the jar of the requested element; or {@code null} if not
+     * specified
+     */
+    public String identifyJar(Element elem) {
+        Path elemFile = locateSource(elem);
+        while (elemFile != null) {
+            String jar = dirToJar.get(elemFile);
+            if (jar != null) return jar;
+            elemFile = elemFile.getParent();
+        }
+        return null;
+    }
+
+    /**
      * Get the source file for an element.
      * 
      * @param elem the element whose source file is sought

@@ -1402,17 +1402,12 @@ public final class Slice {
                        .toASCIIString()),
                    this.toHypertext(SourceContext.EMPTY, outCtxt,
                                     config.title));
-        Path elemFile = config.locateSource(elem);
-        while (elemFile != null) {
-            String jar = config.dirToJar.get(elemFile);
-            if (jar != null) {
-                out.printf("<tr class=\"jar\"><td class=\"name\">%s</td>"
-                    + " <td class=\"value\"><samp>%s</samp></td></tr>\n",
-                           outCtxt.escape(this.getContent("quality.archive")),
-                           outCtxt.escape(jar));
-                break;
-            }
-            elemFile = elemFile.getParent();
+        String jar = config.identifyJar(elem);
+        if (jar != null) {
+            out.printf("<tr class=\"jar\"><td class=\"name\">%s</td>"
+                + " <td class=\"value\"><samp>%s</samp></td></tr>\n",
+                       outCtxt.escape(this.getContent("quality.archive")),
+                       outCtxt.escape(jar));
         }
 
         if (mod != null && mod != elem) {

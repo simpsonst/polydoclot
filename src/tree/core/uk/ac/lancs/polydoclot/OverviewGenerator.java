@@ -248,6 +248,12 @@ public final class OverviewGenerator {
                                  blockCtxt.inAttribute(), slice
                                      .getTreeContent("package-list.table-summary"));
                 out.print("\">\n");
+                boolean someJarsIdentified = !config.dirToJar.isEmpty();
+                out.printf("<colgroup>\n");
+                if (someJarsIdentified) out.printf("<col class=\"jar\">\n");
+                out.printf("<col class=\"package\">\n");
+                out.printf("<col class=\"purpose\">\n");
+                out.printf("</colgroup>\n");
                 if (false)
                     out.printf("<caption>%s</caption>\n", blockCtxt.escape(slice
                         .getContent("section.heading.overview.modules-packages")));
@@ -273,7 +279,8 @@ public final class OverviewGenerator {
                                  b.getQualifiedName().toString()));
                     out.print("<tbody>\n");
                     out.print("<tr class=\"heading\">");
-                    out.print("<th colspan=\"3\">");
+                    if (someJarsIdentified) out.print("<th></th>");
+                    out.print("<th colspan=\"2\">");
                     slice.toHypertext(out::append, inCtxt, blockCtxt, title);
                     out.print("</th>\n");
                     out.print("</tr>\n");
@@ -287,6 +294,13 @@ public final class OverviewGenerator {
                                        .containsKey(pkgDef) ? " deprecated" :
                                            "");
                         even = !even;
+                        String jar = config.identifyJar(pkgDef);
+                        if (jar != null) {
+                            out.printf("<td class=\"jar\"><samp>%s</samp></td>\n",
+                                       blockCtxt.inline().escape(jar));
+                        } else if (someJarsIdentified) {
+                            out.printf("<td></td>\n");
+                        }
                         out.printf("<td class=\"kind\">%s</td>\n", blockCtxt
                             .escape(slice
                                 .getContent("module-package.kind.package")));
