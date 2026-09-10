@@ -178,7 +178,7 @@ Packages and modules can then be assigned to a group:
 ## Undocumented elements
 
 Elements can be marked `@undocumented`, even though they would normally be included.
-This tag has probably been obviated by `{@value}` being allowed to reference private constants.
+This tag is deprecated in favour of the JDK9 `@hidden`.
 
 The switch `-undocumented` enables the generation of a section in the overview listing elements that are to be documented, but lack explicit documentation.
 

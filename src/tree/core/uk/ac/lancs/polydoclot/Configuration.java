@@ -39,6 +39,7 @@ package uk.ac.lancs.polydoclot;
 import com.sun.source.doctree.DeprecatedTree;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocTree;
+import com.sun.source.doctree.HiddenTree;
 import com.sun.source.doctree.LiteralTree;
 import com.sun.source.doctree.ParamTree;
 import com.sun.source.doctree.TextTree;
@@ -1123,8 +1124,10 @@ public final class Configuration {
                      * explicitly excluded. */
                     DocCommentTree docs = docTrees.getDocCommentTree(elem);
                     if (docs != null &&
-                        DocUtils.getUnknownBlockTags(docs, "undocumented")
-                            .iterator().hasNext())
+                        (DocUtils.getUnknownBlockTags(docs, "undocumented")
+                            .iterator().hasNext() ||
+                            DocUtils.getBlockTags(docs, HiddenTree.class)
+                                .iterator().hasNext()))
                         return true;
 
                     /* An element whose container is excluded is also
