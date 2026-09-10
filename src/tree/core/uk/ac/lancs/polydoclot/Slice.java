@@ -765,6 +765,8 @@ public final class Slice {
             @Override
             public Void visitIndex(IndexTree node, Void p) {
                 var term = node.getSearchTerm();
+                /* TODO: If the term has been wrapped in double quotes
+                 * to incorporate spaces, strip those quotes. */
                 var termContent =
                     config.unflattenDoc(Collections.singletonList(term));
                 /* TODO: Wrap content in <dfn/>, but only if in
