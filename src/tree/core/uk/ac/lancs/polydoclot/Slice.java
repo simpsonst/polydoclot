@@ -84,7 +84,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.FormatFlagsConversionMismatchException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -803,106 +802,6 @@ public final class Slice {
                     toHypertext(out, inCtxt, outCtxt, content);
                     if (outCtxt.canMarkUpInline()) out.accept("</span>");
                     break;
-
-                case "plainvalue": {
-                    List<DocTree> rem = new ArrayList<>();
-                    String sig = config.extractLabel(content, rem);
-                    final Element refed;
-                    List<DocTree> rem2 = new ArrayList<>();
-                    final String fmt = config.extractLabel(rem, rem2);
-                    if (sig == null || ".".equals(sig)) {
-                        refed = inCtxt.element();
-                        if (refed == null ||
-                            !refed.getModifiers().contains(Modifier.STATIC) ||
-                            !refed.getModifiers().contains(Modifier.FINAL)) {
-                            config
-                                .report(Kind.ERROR,
-                                        "output.tag.value.failure.outside-constant");
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("<strong class=\"error\">");
-                            out.accept(outCtxt.escape("[BAD VALUE]"));
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("</strong>");
-                            return null;
-                        }
-                    } else {
-                        refed = config.resolveSignature(inCtxt.element(), sig);
-                        if (refed == null) {
-                            if (inCtxt.element() == null)
-                                config.report(Kind.ERROR,
-                                              "output.tag.link.failure.missing",
-                                              sig);
-                            else
-                                config.report(Kind.ERROR, inCtxt.element(),
-                                              "output.tag.link.failure.missing",
-                                              sig);
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("<strong class=\"error\">");
-                            out.accept(outCtxt
-                                .escape("[BAD VALUE FOR " + sig + "]"));
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("</strong>");
-                            return null;
-                        }
-                    }
-
-                    switch (refed.getKind()) {
-                    default:
-                        if (inCtxt.element() == null)
-                            config
-                                .report(Kind.ERROR,
-                                        "output.tag.value.failure.outside-constant");
-                        else
-                            config
-                                .report(Kind.ERROR, inCtxt.element(),
-                                        "output.tag.value.failure.outside-constant");
-                        if (outCtxt.canMarkUpInline())
-                            out.accept("<strong class=\"error\">");
-                        out.accept(outCtxt.escape("[BAD VALUE]"));
-                        if (outCtxt.canMarkUpInline()) out.accept("</strong>");
-                        return null;
-
-                    case FIELD:
-                        VariableElement var = (VariableElement) refed;
-                        Object constant = var.getConstantValue();
-                        if (constant == null) {
-                            if (inCtxt.element() == null)
-                                config
-                                    .report(Kind.ERROR,
-                                            "output.tag.value.failure.outside-constant");
-                            else
-                                config
-                                    .report(Kind.ERROR, inCtxt.element(),
-                                            "output.tag.value.failure.outside-constant");
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("<strong class=\"error\">");
-                            out.accept(outCtxt.escape("[BAD VALUE]"));
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("</strong>");
-                            return null;
-                        }
-
-                        /* TODO: Use output context locale to format the
-                         * string. */
-                        try {
-                            String exp =
-                                String.format("%" + (fmt == null ? "s" : fmt),
-                                              constant);
-                            out.accept(outCtxt.escape(exp));
-                        } catch (FormatFlagsConversionMismatchException ex) {
-                            config.report(Kind.ERROR, inCtxt.element(),
-                                          "output.tag.value.failure.bad-format",
-                                          ex.getConversion(), ex.getFlags());
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("<strong class=\"error\">");
-                            out.accept(outCtxt.escape("[BAD FORMAT]"));
-                            if (outCtxt.canMarkUpInline())
-                                out.accept("</strong>");
-                            return null;
-                        }
-                    }
-                    break;
-                }
 
                 case "keyword":
                     config.report(Kind.WARNING, inCtxt.element(),
