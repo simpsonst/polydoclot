@@ -1082,9 +1082,21 @@ public final class Slice {
                     }
 
                     final String rep;
-                    if (constant instanceof String) {
+                    var fmtTree = node.getFormat();
+                    if (fmtTree != null) {
+                        /* As an explicit format is given, use it as is.
+                         * The string should always have double quotes
+                         * around it, so they must be removed. */
+                        var fmt = fmtTree.getBody();
+                        rep = String.format(Slice.this.spec.locale,
+                                            fmt.substring(1, fmt.length() - 1),
+                                            constant);
+                    } else if (constant instanceof String val) {
+                        /* A string constant with no format is written
+                         * as in source, so escape special characters,
+                         * and wrap in double quotes. */
                         StringBuilder buf = new StringBuilder("\"");
-                        constant.toString().codePoints().flatMap(c -> {
+                        val.codePoints().flatMap(c -> {
                             switch (c) {
                             case '\t':
                                 return IntStream.builder().add('\\').add('t')
@@ -1111,14 +1123,20 @@ public final class Slice {
                                     .build();
 
                             default:
+                                /* TODO: Detect ambiguous characters
+                                 * that should be displayed as
+                                 * Unicode. */
                                 return IntStream.builder().add(c).build();
                             }
                         }).collect(() -> buf, StringBuilder::appendCodePoint,
                                    StringBuilder::append);
                         buf.append('"');
                         rep = buf.toString();
-                    } else if (constant instanceof Character) {
-                        char c = ((Character) constant).charValue();
+                    } else if (constant instanceof Character val) {
+                        /* A character constant with no format is
+                         * written as in source, so escape it if it's
+                         * special, and always wrap in single quotes. */
+                        char c = val;
                         switch (c) {
                         case '\t':
                             rep = "'\\t'";
@@ -1148,18 +1166,21 @@ public final class Slice {
                             rep = "'" + c + "'";
                             break;
                         }
-                    } else if (constant instanceof Long) {
-                        rep = constant.toString() + "L";
-                    } else if (constant instanceof Float) {
-                        rep = constant.toString() + "F";
-                    } else if (constant == null) {
-                        rep = "null";
+                    } else if (constant instanceof Long val) {
+                        /* A long constant without a format is written
+                         * as in source, so add the type suffix. */
+                        rep = Long.toString(val) + "L";
+                    } else if (constant instanceof Float val) {
+                        /* A float constant without a format is written
+                         * as in source, so add the type suffix. */
+                        rep = Float.toString(val) + "F";
                     } else {
+                        /* An int, short or double constant without a
+                         * format is written as in source, so just
+                         * convert to a string. */
                         rep = constant.toString();
                     }
-                    if (outCtxt.canMarkUpInline()) out.accept("<code>");
                     out.accept(outCtxt.escape(rep));
-                    if (outCtxt.canMarkUpInline()) out.accept("</code>");
                     break;
                 }
 
