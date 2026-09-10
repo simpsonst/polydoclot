@@ -45,6 +45,7 @@ import com.sun.source.doctree.DocTree;
 import com.sun.source.doctree.DocTreeVisitor;
 import com.sun.source.doctree.EndElementTree;
 import com.sun.source.doctree.EntityTree;
+import com.sun.source.doctree.IndexTree;
 import com.sun.source.doctree.InheritDocTree;
 import com.sun.source.doctree.LinkTree;
 import com.sun.source.doctree.LiteralTree;
@@ -758,6 +759,23 @@ public final class Slice {
                 OutputContext newCtxt = plain ? outCtxt.inCode() : outCtxt;
                 writeElementReference(out, newCtxt, refed, LinkContent
                     .forLabel(inCtxt, label).withoutNonessentialContainers());
+                return null;
+            }
+
+            @Override
+            public Void visitIndex(IndexTree node, Void p) {
+                var term = node.getSearchTerm();
+                var termContent =
+                    config.unflattenDoc(Collections.singletonList(term));
+                /* TODO: Wrap content in <dfn/>, but only if in
+                 * definitional position, not borrowed like a summary
+                 * line, or from an {@inheritDoc}. */
+                // out.accept("<dfn>");
+                toHypertext(out, inCtxt, outCtxt, termContent);
+                // out.accept("</dfn>");
+                /* TODO: Use node.getDescription(), which is an empty
+                 * list if no description was given, to build an
+                 * index. */
                 return null;
             }
 
