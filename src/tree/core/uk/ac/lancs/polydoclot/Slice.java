@@ -56,6 +56,7 @@ import com.sun.source.doctree.SeeTree;
 import com.sun.source.doctree.SinceTree;
 import com.sun.source.doctree.StartElementTree;
 import com.sun.source.doctree.SummaryTree;
+import com.sun.source.doctree.SystemPropertyTree;
 import com.sun.source.doctree.TextTree;
 import com.sun.source.doctree.ThrowsTree;
 import com.sun.source.doctree.UnknownBlockTagTree;
@@ -761,6 +762,15 @@ public final class Slice {
                 OutputContext newCtxt = plain ? outCtxt.inCode() : outCtxt;
                 writeElementReference(out, newCtxt, refed, LinkContent
                     .forLabel(inCtxt, label).withoutNonessentialContainers());
+                return null;
+            }
+
+            @Override
+            public Void visitSystemProperty(SystemPropertyTree node, Void p) {
+                if (outCtxt.canMarkUpInline())
+                    out.accept("<samp class=\"sysprop\">");
+                writeCamelText(out, outCtxt, node.getPropertyName());
+                if (outCtxt.canMarkUpInline()) out.accept("</samp>");
                 return null;
             }
 
