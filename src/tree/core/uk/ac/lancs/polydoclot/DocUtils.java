@@ -45,6 +45,7 @@ import com.sun.source.doctree.ReturnTree;
 import com.sun.source.doctree.SeeTree;
 import com.sun.source.doctree.ThrowsTree;
 import com.sun.source.doctree.UnknownBlockTagTree;
+import com.sun.source.util.DocTreeScanner;
 import java.lang.annotation.Documented;
 import java.util.Arrays;
 import java.util.Collection;
@@ -394,6 +395,16 @@ public final class DocUtils {
                          t -> t.getTagName().equals("return"))
                 .iterator();
         if (list.hasNext()) return list.next();
+        var visitor = new DocTreeScanner<ReturnTree, Void>() {
+            @Override
+            public ReturnTree visitReturn(ReturnTree node, Void p) {
+                return node;
+            }
+        };
+        if (comm != null) for (var item : comm.getFullBody()) {
+            var r = item.accept(visitor, null);
+            if (r != null) return r;
+        }
         return null;
     }
 

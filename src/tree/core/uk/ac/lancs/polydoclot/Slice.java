@@ -763,6 +763,15 @@ public final class Slice {
             }
 
             @Override
+            public Void visitReturn(ReturnTree node, Void p) {
+                var descr = node.getDescription().stream().map(Object::toString)
+                    .collect(Collectors.joining());
+                toHypertext(out, inCtxt, outCtxt,
+                            getFormattedTreeContent("synth.return", descr));
+                return null;
+            }
+
+            @Override
             public Void visitIndex(IndexTree node, Void p) {
                 var term = node.getSearchTerm();
                 /* TODO: If the term has been wrapped in double quotes
