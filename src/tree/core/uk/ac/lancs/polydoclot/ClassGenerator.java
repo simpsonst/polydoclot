@@ -271,6 +271,7 @@ public final class ClassGenerator {
                                                  typeDoc.getFullBody()));
                     out.printf("</div>\n");
                 }
+                slice.writeSpecSection(out, typeContext, blockContext, typeDoc);
                 slice.writeSeeSection(out, typeContext, blockContext, typeDoc);
                 out.printf("</div>\n");
 
@@ -703,6 +704,7 @@ public final class ClassGenerator {
                 }
                 out.printf("</div>\n");
             }
+            slice.writeSpecSection(out, membContext, membOutCtxt, membDoc);
             slice.writeSeeSection(out, membContext, membOutCtxt, membDoc);
             out.printf("</div>\n");
 

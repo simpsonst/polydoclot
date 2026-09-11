@@ -54,6 +54,7 @@ import com.sun.source.doctree.ReferenceTree;
 import com.sun.source.doctree.ReturnTree;
 import com.sun.source.doctree.SeeTree;
 import com.sun.source.doctree.SinceTree;
+import com.sun.source.doctree.SpecTree;
 import com.sun.source.doctree.StartElementTree;
 import com.sun.source.doctree.SummaryTree;
 import com.sun.source.doctree.SystemPropertyTree;
@@ -1533,6 +1534,30 @@ public final class Slice {
             }
         }
         return false;
+    }
+
+    public void writeSpecSection(PrintWriter out, SourceContext inCtxt,
+                                 OutputContext outCtxt, DocCommentTree doc) {
+        List<SpecTree> specTags = new ArrayList<>();
+        DocUtils.getBlockTags(doc, SpecTree.class).forEach(specTags::add);
+        if (specTags.isEmpty()) return;
+        out.print("<div class=\"javadoc-spec\">\n");
+        out.printf("<h2><span>%s</span></h2>\n",
+                   outCtxt.escape(getContent("section.heading.specs")));
+        out.print("<ul>\n");
+        for (var tag : specTags) {
+            var loc = URI.create(tag.getURL().getBody());
+            if (!loc.isAbsolute())
+                loc = config.outputDirectory.toUri().resolve(loc);
+            var title = tag.getTitle();
+            out.print("<li class=\"plain\">");
+            out.printf("<a href=\"%s\">", loc.toASCIIString());
+            toHypertext(out::append, inCtxt, outCtxt, title);
+            out.print("</a>");
+            out.print("</li>\n");
+        }
+        out.print("</ul>\n");
+        out.print("</div>\n");
     }
 
     /**

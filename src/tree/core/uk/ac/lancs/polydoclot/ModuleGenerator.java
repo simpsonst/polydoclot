@@ -158,6 +158,7 @@ public class ModuleGenerator {
                         .toHypertext(inCtxt, blockCtxt, docs.getFullBody()));
                     out.printf("</div>\n");
                 }
+                slice.writeSpecSection(out, inCtxt, blockCtxt, docs);
                 slice.writeSeeSection(out, inCtxt, blockCtxt, docs);
                 out.printf("</div>\n");
 

@@ -356,6 +356,7 @@ public final class OverviewGenerator {
                                              config.overviewDoc.getFullBody()));
                 out.printf("</div>\n");
             }
+            slice.writeSpecSection(out, inCtxt, blockCtxt, config.overviewDoc);
             slice.writeSeeSection(out, inCtxt, blockCtxt, config.overviewDoc);
             out.printf("</div>\n");
 

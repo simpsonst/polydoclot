@@ -199,6 +199,7 @@ public final class PackageGenerator {
                     out.print("\n");
                     out.printf("</div>\n");
                 }
+                slice.writeSpecSection(out, pkgCtxt, blockCtxt, pkgDoc);
                 slice.writeSeeSection(out, pkgCtxt, blockCtxt, pkgDoc);
                 out.printf("</div>\n");
 
