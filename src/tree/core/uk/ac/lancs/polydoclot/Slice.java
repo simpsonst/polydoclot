@@ -55,12 +55,14 @@ import com.sun.source.doctree.ReturnTree;
 import com.sun.source.doctree.SeeTree;
 import com.sun.source.doctree.SinceTree;
 import com.sun.source.doctree.StartElementTree;
+import com.sun.source.doctree.SummaryTree;
 import com.sun.source.doctree.TextTree;
 import com.sun.source.doctree.ThrowsTree;
 import com.sun.source.doctree.UnknownBlockTagTree;
 import com.sun.source.doctree.UnknownInlineTagTree;
 import com.sun.source.doctree.ValueTree;
 import com.sun.source.doctree.VersionTree;
+import com.sun.source.util.DocTreeScanner;
 import com.sun.source.util.SimpleDocTreeVisitor;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -787,6 +789,12 @@ public final class Slice {
                 /* TODO: Use node.getDescription(), which is an empty
                  * list if no description was given, to build an
                  * index. */
+                return null;
+            }
+
+            @Override
+            public Void visitSummary(SummaryTree node, Void p) {
+                toHypertext(out, inCtxt, outCtxt, node.getSummary());
                 return null;
             }
 
@@ -2809,6 +2817,24 @@ public final class Slice {
             toHypertext(out, tagCtxt, outCtxt, content);
             if (afterOkay != null) afterOkay.run();
             return true;
+        }
+
+        /* Find a {@summary} tag in the description. */
+        var visitor = new DocTreeScanner<SummaryTree, Void>() {
+            @Override
+            public SummaryTree visitSummary(SummaryTree node, Void p) {
+                return node;
+            }
+        };
+        for (var item : all.getFullBody()) {
+            var r = item.accept(visitor, null);
+            if (r != null) {
+                if (beforeOkay != null) beforeOkay.run();
+                toHypertext(out, SourceContext.forElement(elem), outCtxt,
+                            r.getSummary());
+                if (afterOkay != null) afterOkay.run();
+                return true;
+            }
         }
 
         /* Use the first sentence. */
