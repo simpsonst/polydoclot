@@ -1032,11 +1032,13 @@ public final class Slice {
                     var fmtTree = node.getFormat();
                     if (fmtTree != null) {
                         /* As an explicit format is given, use it as is.
-                         * The string should always have double quotes
-                         * around it, so they must be removed. */
+                         * The string can have double quotes around it,
+                         * so they must be removed. TODO: Unescape the
+                         * format string before use. */
                         var fmt = fmtTree.getBody();
-                        rep = String.format(Slice.this.spec.locale,
-                                            fmt.substring(1, fmt.length() - 1),
+                        if (!fmt.isEmpty() && fmt.charAt(0) == '"')
+                            fmt = fmt.substring(1, fmt.length() - 1);
+                        rep = String.format(Slice.this.spec.locale, fmt,
                                             constant);
                     } else if (constant instanceof String val) {
                         /* A string constant with no format is written
