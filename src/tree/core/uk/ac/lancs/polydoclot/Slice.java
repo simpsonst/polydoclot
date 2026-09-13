@@ -348,7 +348,7 @@ public final class Slice {
                                                               Void p) {
                                         switch (node.getTagName()) {
                                         case "keyword":
-                                            Matcher m = keywordPattern
+                                            Matcher m = KEYWORD_PATTERN
                                                 .matcher(config.treeText(node
                                                     .getContent()));
                                             if (m.matches()) {
@@ -3206,7 +3206,7 @@ public final class Slice {
         into.addAll(undocumentedElements);
     }
 
-    private static final Pattern keywordPattern =
+    private static final Pattern KEYWORD_PATTERN =
         Pattern.compile("^\\$(?:[^:]*:\\s*)([^$]+)\\$\\s*$");
 
     /**
