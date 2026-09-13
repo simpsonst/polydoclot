@@ -2638,8 +2638,8 @@ public final class Slice {
         if (putInCodeBlock) out.accept("</code>");
     }
 
-    private final List<? extends DocTree> toTreeContent(String key,
-                                                        CharSequence text) {
+    private List<? extends DocTree> toTreeContent(String key,
+                                                  CharSequence text) {
         String rawText = "<body>" + text + "</body>";
         FileObject file = new FileObject() {
             @Override
