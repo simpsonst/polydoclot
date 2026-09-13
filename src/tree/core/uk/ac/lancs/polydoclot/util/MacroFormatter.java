@@ -323,7 +323,7 @@ public class MacroFormatter {
         rootElement = optimize(rootSequence);
     }
 
-    private List<Escaper> escapers = new ArrayList<>();
+    private final List<Escaper> escapers = new ArrayList<>();
 
     /**
      * Add an additional level of escaping to literal content.

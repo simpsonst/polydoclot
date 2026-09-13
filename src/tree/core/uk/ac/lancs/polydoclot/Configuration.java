@@ -960,7 +960,7 @@ public final class Configuration {
 
                 Map<Element, ElementQualities> cache = new HashMap<>();
 
-                private Map<TypeElement, List<TypeElement>> ancestors =
+                private final Map<TypeElement, List<TypeElement>> ancestors =
                     new HashMap<>();
 
                 private List<TypeElement> ensureAncestors(Element elem) {
