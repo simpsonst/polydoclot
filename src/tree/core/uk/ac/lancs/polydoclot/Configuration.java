@@ -2200,6 +2200,7 @@ public final class Configuration {
          * types are the result. */
         if (packageClassText == null) {
             List<Element> result = new ArrayList<>();
+            assert ctxt != null;
             do {
                 result.add(ctxt);
                 ctxt = ctxt.getEnclosingElement();

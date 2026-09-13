@@ -541,6 +541,7 @@ public final class ClassGenerator {
 
         case CONSTRUCTOR:
         case METHOD:
+            assert execMemb != null;
             for (VariableElement var : execMemb.getParameters()) {
                 /* Get the parameter type, and count array dimensions.
                  * Get the type's corresponding element (if any) so we
@@ -1377,6 +1378,7 @@ public final class ClassGenerator {
 
         case METHOD:
         case CONSTRUCTOR:
+            assert execElem != null;
             List<? extends TypeParameterElement> tps =
                 execElem.getTypeParameters();
             if (!tps.isEmpty()) {
@@ -1400,6 +1402,7 @@ public final class ClassGenerator {
         final String kwd;
         switch (elem.getKind()) {
         case METHOD:
+            assert execElem != null;
             String rtaIndent =
                 indent + String.join("", Collections.nCopies(c.sum, " "));
             slice.writeAnnotationMirrors(out, ctxt, DocUtils
@@ -1417,6 +1420,7 @@ public final class ClassGenerator {
 
         case ENUM_CONSTANT:
         case FIELD:
+            assert varElem != null;
             slice.writeTypeReference(c::accept, OutputContext
                 .plain(config.types, ctxt.location(), ctxt.element()),
                                      varElem.asType(),
@@ -1463,6 +1467,7 @@ public final class ClassGenerator {
 
         case CONSTRUCTOR:
         case METHOD: {
+            assert execElem != null;
             String newIndent =
                 indent + String.join("", Collections.nCopies(c.sum + 1, " "));
             List<? extends VariableElement> params = execElem.getParameters();
@@ -1496,6 +1501,7 @@ public final class ClassGenerator {
 
         case ENUM:
         case CLASS: {
+            assert typeElem != null;
             if (true || !config.types.isSameType(typeElem.getSuperclass(),
                                                  config.javaLangObject)) {
                 out.print(ctxt.escape("\n" + indent + "  extends "));
@@ -1515,6 +1521,7 @@ public final class ClassGenerator {
 
         case ANNOTATION_TYPE:
         case INTERFACE: {
+            assert typeElem != null;
             String sep = "\n" + indent + "  extends ";
             for (TypeMirror impl : typeElem.getInterfaces()) {
                 out.print(ctxt.escape(sep));

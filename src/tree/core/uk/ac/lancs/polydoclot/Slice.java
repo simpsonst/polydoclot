@@ -1988,6 +1988,7 @@ public final class Slice {
                 new ArrayList<>(Arrays.asList(config.tidyProgram, "-i", "-q",
                                               "-utf8", "--wrap", "0"));
             if (logDir != null) {
+                assert tidyLog != null;
                 tidyArgs.add("-f");
                 tidyArgs.add(tidyLog.toString());
                 Files.createDirectories(logDir);
