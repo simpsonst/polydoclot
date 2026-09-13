@@ -1016,7 +1016,6 @@ public final class ClassGenerator {
         } catch (IOException ex) {
             config.report(Kind.ERROR, memb, "output.member.failure.write",
                           ex.getMessage(), membFile);
-            return;
         }
     }
 
@@ -1027,19 +1026,6 @@ public final class ClassGenerator {
                         Collection<? extends Modifier> redundantMods,
                         Collection<? extends ExecutableElement> pseudocons) {
         if (!members.isEmpty()) {
-            if (false) {
-                int longestName = 0;
-                for (Element cand : members) {
-                    String name = slice
-                        .getElementReference(SourceContext.EMPTY, OutputContext
-                            .plain(config.types, null, outCtxt.element()), cand,
-                                             LinkContent.NORMAL.withoutPackage()
-                                                 .withoutParameters());
-                    int len = name.length();
-                    if (len > longestName) longestName = len;
-                }
-            }
-
             Collections.sort(members,
                              (a, b) -> String.CASE_INSENSITIVE_ORDER
                                  .compare(a.getSimpleName().toString(),
@@ -1136,15 +1122,6 @@ public final class ClassGenerator {
                 LinkContent detail = LinkContent.NORMAL.withoutParameters();
                 if (!pseudocons.contains(memb))
                     detail = detail.withoutNonessentialContainers();
-                if (false) {
-                    if (!redundantMods.contains(Modifier.STATIC) &&
-                        memb.getModifiers().contains(Modifier.STATIC) &&
-                        memb.getKind() == ElementKind.METHOD) {
-                        ;
-                    } else {
-                        detail = detail.withoutNonessentialContainers();
-                    }
-                }
 
                 slice.writeElementReference(out::append, outCtxt.inCode(), memb,
                                             detail);

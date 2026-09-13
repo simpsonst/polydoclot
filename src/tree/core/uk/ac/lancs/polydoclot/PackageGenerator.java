@@ -49,7 +49,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.lang.model.element.AnnotationMirror;
@@ -222,32 +221,6 @@ public final class PackageGenerator {
                 classList.retainAll(env.getIncludedElements());
                 classList.removeAll(config.excludedElements);
                 classList.sort(TYPE_ORDER);
-
-                if (false) {
-                    /* Split out the checked and unchecked
-                     * exceptions. */
-                    List<TypeElement> checkedList = new ArrayList<>();
-                    List<TypeElement> uncheckedList = new ArrayList<>();
-                    for (Iterator<TypeElement> iter = classList.iterator();
-                         iter.hasNext();) {
-                        TypeElement cur = iter.next();
-                        if (config.types.isSubtype(cur.asType(),
-                                                   config.javaLangError) ||
-                            config.types
-                                .isSubtype(cur.asType(),
-                                           config.javaLangRuntimeException)) {
-                            iter.remove();
-                            uncheckedList.add(cur);
-                            continue;
-                        }
-                        if (config.types.isSubtype(cur.asType(),
-                                                   config.javaLangException)) {
-                            iter.remove();
-                            checkedList.add(cur);
-                            continue;
-                        }
-                    }
-                }
 
                 out.print("<table class=\"javadoc-class-list wide\" summary=\"");
                 slice

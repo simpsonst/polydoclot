@@ -1998,9 +1998,6 @@ public final class Configuration {
             case INTERFACE:
             case ANNOTATION_TYPE:
                 return elem.asType();
-
-            default:
-                continue;
             }
         }
         return null;

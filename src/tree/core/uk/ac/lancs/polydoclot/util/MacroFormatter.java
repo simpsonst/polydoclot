@@ -318,7 +318,7 @@ public class MacroFormatter {
         this.countCmd = syntax.countCmd;
         this.ifCmd = syntax.ifCmd;
         this.format = format;
-        List<Element> rootSequence = new ArrayList<Element>(10);
+        List<Element> rootSequence = new ArrayList<>(10);
         parseSequence(rootSequence, format, true);
         rootElement = optimize(rootSequence);
     }
@@ -442,7 +442,7 @@ public class MacroFormatter {
 
         boolean more;
         do {
-            List<Element> sequence = new ArrayList<Element>(4);
+            List<Element> sequence = new ArrayList<>(4);
             int done = parseSequence(sequence, format, false);
             format = format.subSequence(done, format.length());
             elements.add(optimize(sequence));
@@ -463,7 +463,7 @@ public class MacroFormatter {
             throw new IllegalArgumentException("Incomplete macro: " + format);
 
         /* Compute a list of arguments. */
-        List<Element> args = new ArrayList<Element>(4);
+        List<Element> args = new ArrayList<>(4);
         final int done;
 
         char c = format.charAt(0);

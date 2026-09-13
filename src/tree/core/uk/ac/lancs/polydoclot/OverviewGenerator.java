@@ -46,7 +46,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,85 +88,6 @@ public final class OverviewGenerator {
      */
     public void run() {
         config.diagnostic("output.overview");
-
-        /* TODO: Delete this block. */
-        if (false) {
-            /* Invert the mapping from group to its module members. */
-            Map<String, Object> moduleToGroup = new HashMap<>();
-            for (Map.Entry<Object,
-                           Collection<String>> entry : config.moduleGroupings
-                               .entrySet()) {
-                for (String name : entry.getValue())
-                    moduleToGroup.put(name, entry.getKey());
-            }
-
-            /* Identify all modules to be documented. */
-            Map<Object, List<ModuleElement>> groupedModules = new HashMap<>();
-            List<ModuleElement> nakedModules = new ArrayList<>();
-            for (ModuleElement mod : ElementFilter
-                .modulesIn(config.env.getIncludedElements())) {
-                /* We never document the unnamed module, even if the
-                 * packages being documented are effectively partially
-                 * defining it. */
-                if (mod.isUnnamed()) continue;
-
-                /* Skip modules explicitly marked as not to be
-                 * documented. This step could be redundant, as modules
-                 * and packages should never really be
-                 * marked @undocumented. */
-                if (config.excludedElements.contains(mod)) continue;
-
-                /* Decide which group this module belongs in. */
-                Object groupKey =
-                    moduleToGroup.get(mod.getQualifiedName().toString());
-                if (groupKey == null)
-                    nakedModules.add(mod);
-                else
-                    groupedModules
-                        .computeIfAbsent(groupKey, k -> new ArrayList<>())
-                        .add(mod);
-            }
-
-            /* Invert the mapping from group to its package members. */
-            Map<String, Object> packageToGroup = new HashMap<>();
-            for (Map.Entry<Object,
-                           Collection<String>> entry : config.packageGroupings
-                               .entrySet()) {
-                for (String name : entry.getValue())
-                    packageToGroup.put(name, entry.getKey());
-            }
-
-            /* Identify packages not belonging to modules, and put them
-             * into the appropriate groups if necessary. Packages
-             * belonging to documented modules don't need to be listed
-             * here, because they will be listed in their respective
-             * module's documentation. */
-            Map<Object, List<PackageElement>> groupedPackages = new HashMap<>();
-            List<PackageElement> nakedPackages = new ArrayList<>();
-            for (PackageElement pkgDef : ElementFilter
-                .packagesIn(config.env.getIncludedElements())) {
-                /* Skip packages explicitly marked as not to be
-                 * documented. This step could be redundant, as modules
-                 * and packages should never really be
-                 * marked @undocumented. */
-                if (config.excludedElements.contains(pkgDef)) continue;
-
-                /* Skip packages belonging to a named module, whose
-                 * documentation will list it separately. */
-                ModuleElement mod = config.elements.getModuleOf(pkgDef);
-                if (mod != null && !mod.isUnnamed()) continue;
-
-                /* Decide which group this package belongs in. */
-                Object groupKey =
-                    packageToGroup.get(pkgDef.getQualifiedName().toString());
-                if (groupKey == null)
-                    nakedPackages.add(pkgDef);
-                else
-                    groupedPackages
-                        .computeIfAbsent(groupKey, k -> new ArrayList<>())
-                        .add(pkgDef);
-            }
-        }
 
         List<? extends DocTree> anonGroupTitle =
             slice.getTreeContent("group.unnamed"
@@ -395,7 +315,7 @@ public final class OverviewGenerator {
                 out.print("</div>\n");
             }
 
-            if (true && config.deprecatedElements.size() > 0) {
+            if (!config.deprecatedElements.isEmpty()) {
                 out.printf("<div class=\"deprecated\">");
                 out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
                            blockCtxt.escape(slice
@@ -446,11 +366,9 @@ public final class OverviewGenerator {
             out.printf("</html>\n");
         } catch (FileNotFoundException e) {
             reporter.print(Kind.ERROR, "file not found: " + ovFile);
-            return;
         } catch (IOException e1) {
             reporter.print(Kind.ERROR,
                            "I/O error (" + e1.getMessage() + "): " + ovFile);
-            return;
         }
     }
 

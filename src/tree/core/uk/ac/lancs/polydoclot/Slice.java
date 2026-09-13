@@ -2600,28 +2600,8 @@ public final class Slice {
                         out.accept("</" + wrapper + ">");
                     }
 
-                    if (false && !enclosedOutCtxt.isAccountedFor(t)) {
-                        OutputContext tvCtxt = enclosedOutCtxt.accountFor(t);
-
-                        /* TODO: What is meant by these bounds? Are some
-                         * of them just mirrors of the bounds on the
-                         * corresponding TypeParameterElement? */
-                        TypeMirror lb = t.getLowerBound();
-                        assert lb != null;
-                        if (lb.getKind() != TypeKind.NULL) {
-                            out.accept(tvCtxt.escape(" super "));
-                            writeTypeReference(out, tvCtxt, lb,
-                                               LinkContent.NORMAL);
-                        }
-
-                        TypeMirror ub = t.getUpperBound();
-                        if (!config.types.isSameType(ub,
-                                                     config.javaLangObject)) {
-                            out.accept(tvCtxt.escape(" extends "));
-                            writeTypeReference(out, tvCtxt, ub,
-                                               LinkContent.NORMAL);
-                        }
-                    }
+                    /* TODO: Do we need to look at upper and lower
+                     * bounds of t? */
                 }
                 return null;
             }
