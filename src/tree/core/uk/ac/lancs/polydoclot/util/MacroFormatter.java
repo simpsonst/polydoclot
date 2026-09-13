@@ -522,6 +522,7 @@ public class MacroFormatter {
             this.data = data;
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             CharSequence cs = data;
             for (Escaper e : escapers)
@@ -537,6 +538,7 @@ public class MacroFormatter {
             this.components = components;
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             StringBuilder result = new StringBuilder(100);
             for (Element e : components)
@@ -552,6 +554,7 @@ public class MacroFormatter {
             this.name = name;
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedName = name.expand(params).toString();
             int i = 0;
@@ -590,6 +593,7 @@ public class MacroFormatter {
             }
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedName = name.expand(params).toString();
             return params.getProperty(expandedName) != null ||
@@ -605,6 +609,7 @@ public class MacroFormatter {
             this.name = name;
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedName = name.expand(params).toString();
             String result = params.getProperty(expandedName);
@@ -630,6 +635,7 @@ public class MacroFormatter {
             }
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedText = text.expand(params).toString();
             String expandedPattern = pattern.expand(params).toString();
@@ -656,6 +662,7 @@ public class MacroFormatter {
             }
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedText = text.expand(params).toString();
             String expandedCount = count.expand(params).toString();
@@ -696,6 +703,7 @@ public class MacroFormatter {
             }
         }
 
+        @Override
         public CharSequence expand(Properties params) {
             String expandedName = name.expand(params).toString();
             String expandedVar = var.expand(params).toString();

@@ -109,6 +109,7 @@ public final class HttpSyntax {
          *
          * @return the original text as a string.
          */
+        @Override
         public String toString() {
             return new String(text);
         }
