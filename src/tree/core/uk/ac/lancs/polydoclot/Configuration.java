@@ -2966,50 +2966,44 @@ public final class Configuration {
      * ending with the overview documentation comment
      */
     public Iterable<DocWithContext> docChain(Element elem) {
-        return new Iterable<DocWithContext>() {
-            @Override
-            public Iterator<DocWithContext> iterator() {
-                return new Iterator<DocWithContext>() {
-                    DocWithContext next;
+        return () -> new Iterator<DocWithContext>() {
+            DocWithContext next;
 
-                    Element chain = elem;
+            Element chain = elem;
 
-                    DocCommentTree overview = Configuration.this.overviewDoc;
+            DocCommentTree overview = Configuration.this.overviewDoc;
 
-                    boolean ensureNext() {
-                        if (next != null) return true;
-                        while (chain != null) {
-                            Element enc = chain.getEnclosingElement();
-                            DocCommentTree doc =
-                                docTrees.getDocCommentTree(chain);
-                            if (doc != null) {
-                                next = new DocWithContext(doc, SourceContext
-                                    .forElement(chain));
-                                chain = enc;
-                                return true;
-                            }
-                            chain = enc;
-                        }
-                        if (overview == null) return false;
+            boolean ensureNext() {
+                if (next != null) return true;
+                while (chain != null) {
+                    Element enc = chain.getEnclosingElement();
+                    DocCommentTree doc = docTrees.getDocCommentTree(chain);
+                    if (doc != null) {
                         next =
-                            new DocWithContext(overview, SourceContext.EMPTY);
-                        overview = null;
+                            new DocWithContext(doc,
+                                               SourceContext.forElement(chain));
+                        chain = enc;
                         return true;
                     }
+                    chain = enc;
+                }
+                if (overview == null) return false;
+                next = new DocWithContext(overview, SourceContext.EMPTY);
+                overview = null;
+                return true;
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return ensureNext();
-                    }
+            @Override
+            public boolean hasNext() {
+                return ensureNext();
+            }
 
-                    @Override
-                    public DocWithContext next() {
-                        if (!ensureNext()) throw new NoSuchElementException();
-                        DocWithContext result = next;
-                        next = null;
-                        return result;
-                    }
-                };
+            @Override
+            public DocWithContext next() {
+                if (!ensureNext()) throw new NoSuchElementException();
+                DocWithContext result = next;
+                next = null;
+                return result;
             }
         };
     }

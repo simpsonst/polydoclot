@@ -330,41 +330,36 @@ public final class DocUtils {
         getBlockTags(DocCommentTree comm, Class<T> type,
                      Predicate<? super T> filter) {
         if (comm == null) return Collections.emptySet();
-        return new Iterable<T>() {
+        return () -> new Iterator<T>() {
+            final Iterator<? extends DocTree> inner =
+                comm.getBlockTags().iterator();
+
+            T next;
+
+            boolean ensure() {
+                while (next == null && inner.hasNext()) {
+                    DocTree tt = inner.next();
+                    if (!type.isInstance(tt)) continue;
+                    T bt = type.cast(tt);
+                    if (!filter.test(bt)) continue;
+                    next = bt;
+                }
+                return next != null;
+            }
+
             @Override
-            public Iterator<T> iterator() {
-                return new Iterator<T>() {
-                    final Iterator<? extends DocTree> inner =
-                        comm.getBlockTags().iterator();
+            public boolean hasNext() {
+                return ensure();
+            }
 
-                    T next;
-
-                    boolean ensure() {
-                        while (next == null && inner.hasNext()) {
-                            DocTree tt = inner.next();
-                            if (!type.isInstance(tt)) continue;
-                            T bt = type.cast(tt);
-                            if (!filter.test(bt)) continue;
-                            next = bt;
-                        }
-                        return next != null;
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        return ensure();
-                    }
-
-                    @Override
-                    public T next() {
-                        if (ensure()) {
-                            T result = next;
-                            next = null;
-                            return result;
-                        }
-                        throw new NoSuchElementException();
-                    }
-                };
+            @Override
+            public T next() {
+                if (ensure()) {
+                    T result = next;
+                    next = null;
+                    return result;
+                }
+                throw new NoSuchElementException();
             }
         };
     }

@@ -109,10 +109,5 @@ public interface Escaper {
     /**
      * An escaper that does nothing
      */
-    static Escaper IDENTITY = new Escaper() {
-        @Override
-        public IntStream escape(IntStream in) {
-            return in;
-        }
-    };
+    static Escaper IDENTITY = (in) -> in;
 }

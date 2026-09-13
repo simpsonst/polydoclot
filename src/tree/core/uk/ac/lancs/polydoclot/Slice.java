@@ -314,92 +314,84 @@ public final class Slice {
      * @return the output iteration
      */
     public Iterable<DocTree> resolveTextTags(Iterable<? extends DocTree> in) {
-        return new Iterable<DocTree>() {
+        return () -> new Iterator<DocTree>() {
+            final Iterator<? extends DocTree> source = in.iterator();
+
+            DocTree fetched;
+
+            final StringBuilder cache = new StringBuilder();
+
+            /* Ensure that we have the next non-text node lined up. */
+            boolean ensureFetched() {
+                while (fetched == null) {
+                    if (!source.hasNext()) return false;
+                    fetched = source.next();
+                    DocTreeVisitor<Boolean, Void> action =
+                        new SimpleDocTreeVisitor<>(false) {
+                            @Override
+                            public Boolean visitEntity(EntityTree node,
+                                                       Void p) {
+                                final int codePoint = HypertextEscaper
+                                    .codePointForEntity(node.getName());
+                                if (codePoint < 0) return false;
+                                cache.appendCodePoint(codePoint);
+                                return true;
+                            }
+
+                            @Override
+                            public Boolean
+                                visitUnknownInlineTag(UnknownInlineTagTree node,
+                                                      Void p) {
+                                switch (node.getTagName()) {
+                                case "keyword":
+                                    Matcher m = KEYWORD_PATTERN.matcher(config
+                                        .treeText(node.getContent()));
+                                    if (m.matches()) {
+                                        cache.append(m.group(1));
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                                return false;
+                            }
+
+                            @Override
+                            public Boolean visitText(TextTree node, Void p) {
+                                cache.append(node.getBody());
+                                return true;
+                            }
+                        };
+                    if (!fetched.accept(action, null)) break;
+                    fetched = null;
+                }
+                return true;
+            }
+
             @Override
-            public Iterator<DocTree> iterator() {
-                return new Iterator<DocTree>() {
-                    final Iterator<? extends DocTree> source = in.iterator();
+            public boolean hasNext() {
+                ensureFetched();
+                if (cache.length() > 0) return true;
+                if (fetched != null) return true;
+                return source.hasNext();
+            }
 
-                    DocTree fetched;
-
-                    final StringBuilder cache = new StringBuilder();
-
-                    /* Ensure that we have the next non-text node lined
-                     * up. */
-                    boolean ensureFetched() {
-                        while (fetched == null) {
-                            if (!source.hasNext()) return false;
-                            fetched = source.next();
-                            DocTreeVisitor<Boolean, Void> action =
-                                new SimpleDocTreeVisitor<>(false) {
-                                    @Override
-                                    public Boolean visitEntity(EntityTree node,
-                                                               Void p) {
-                                        final int codePoint = HypertextEscaper
-                                            .codePointForEntity(node.getName());
-                                        if (codePoint < 0) return false;
-                                        cache.appendCodePoint(codePoint);
-                                        return true;
-                                    }
-
-                                    @Override
-                                    public Boolean
-                                        visitUnknownInlineTag(UnknownInlineTagTree node,
-                                                              Void p) {
-                                        switch (node.getTagName()) {
-                                        case "keyword":
-                                            Matcher m = KEYWORD_PATTERN
-                                                .matcher(config.treeText(node
-                                                    .getContent()));
-                                            if (m.matches()) {
-                                                cache.append(m.group(1));
-                                                return true;
-                                            }
-                                            return false;
-                                        }
-
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public Boolean visitText(TextTree node,
-                                                             Void p) {
-                                        cache.append(node.getBody());
-                                        return true;
-                                    }
-                                };
-                            if (!fetched.accept(action, null)) break;
-                            fetched = null;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        ensureFetched();
-                        if (cache.length() > 0) return true;
-                        if (fetched != null) return true;
-                        return source.hasNext();
-                    }
-
-                    @Override
-                    public DocTree next() {
-                        ensureFetched();
-                        if (cache.length() > 0) {
-                            DocTree result = config.docTreeFactory
-                                .newTextTree(cache.toString());
-                            cache.delete(0, cache.length());
-                            return result;
-                        }
-                        if (fetched != null) {
-                            DocTree result = fetched;
-                            fetched = null;
-                            return result;
-                        }
-                        assert !source.hasNext();
-                        throw new NoSuchElementException();
-                    }
-                };
+            @Override
+            public DocTree next() {
+                ensureFetched();
+                if (cache.length() > 0) {
+                    DocTree result =
+                        config.docTreeFactory.newTextTree(cache.toString());
+                    cache.delete(0, cache.length());
+                    return result;
+                }
+                if (fetched != null) {
+                    DocTree result = fetched;
+                    fetched = null;
+                    return result;
+                }
+                assert !source.hasNext();
+                throw new NoSuchElementException();
             }
         };
     }
