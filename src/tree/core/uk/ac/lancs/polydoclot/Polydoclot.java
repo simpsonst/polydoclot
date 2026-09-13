@@ -421,7 +421,7 @@ public class Polydoclot implements Doclet {
 
     private Path diagnosticsDirectory;
 
-    private List<DocImport> imports = new ArrayList<>();
+    private final List<DocImport> imports = new ArrayList<>();
 
     private String hypertextLinkSuffix = ".html";
 
@@ -435,7 +435,7 @@ public class Polydoclot implements Doclet {
 
     private final Map<String, String> jarToVersion = new HashMap<>();
 
-    private List<SliceSpecification> sliceSpecs = new ArrayList<>();
+    private final List<SliceSpecification> sliceSpecs = new ArrayList<>();
 
     private String rawTitle;
 
@@ -445,9 +445,9 @@ public class Polydoclot implements Doclet {
 
     private String tidyProgram = "tidy";
 
-    private Map<Object, Collection<String>> groupings = new HashMap<>();
+    private final Map<Object, Collection<String>> groupings = new HashMap<>();
 
-    private Map<Object, String> rawGroupTitles = new LinkedHashMap<>();
+    private final Map<Object, String> rawGroupTitles = new LinkedHashMap<>();
 
     /**
      * This is the naming scheme used by the Polydoclot doclet,
