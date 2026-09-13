@@ -302,7 +302,7 @@ public final class Configuration {
                      Collection<? extends PackageElement>> groupedPackages;
 
     /**
-     * A mapping from group identifier to its containeed module elements
+     * A mapping from group identifier to its contained module elements
      */
     public final Map<Object,
                      Collection<? extends ModuleElement>> groupedModules;
