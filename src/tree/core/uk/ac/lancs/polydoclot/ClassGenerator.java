@@ -63,7 +63,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.RecordComponentElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
@@ -275,8 +274,16 @@ public final class ClassGenerator {
                 slice.writeSeeSection(out, typeContext, blockContext, typeDoc);
                 out.printf("</div>\n");
 
+                /* Note that we don't list record members at the moment.
+                 * Instead, we generate partially synthetic
+                 * documentation for the accessors, which is one half of
+                 * all the user sees. The other half is the default
+                 * constructor, the comments of whose parameters are
+                 * extracted from the enclosing type's documentation. */
+                // List<RecordComponentElement> recordMembers = new
+                // ArrayList<>();
+
                 /* Catalogue all members. */
-                List<RecordComponentElement> recordMembers = new ArrayList<>();
                 List<TypeElement> staticClasses = new ArrayList<>();
                 List<TypeElement> innerClasses = new ArrayList<>();
                 List<VariableElement> instanceFields = new ArrayList<>();
@@ -304,7 +311,8 @@ public final class ClassGenerator {
                         break;
 
                     case RECORD_COMPONENT:
-                        recordMembers.add((RecordComponentElement) memb);
+                        // recordMembers.add((RecordComponentElement)
+                        // memb);
                         break;
 
                     case ENUM_CONSTANT:
