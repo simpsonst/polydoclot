@@ -122,7 +122,7 @@ public final class HypertextEscaper implements Escaper {
         });
     }
 
-    private static final Pattern hexEnt =
+    private static final Pattern HEX_ENT_PATTERN =
         Pattern.compile("^(?:(?:#[xX](?<xcode>[a-fA-F0-9]+))"
             + "|(?:#(?<code>[0-9]+))" + "|(?<ref>.*))$");
 
@@ -148,7 +148,7 @@ public final class HypertextEscaper implements Escaper {
      * {@code -1} if not recognized
      */
     public static int codePointForEntity(CharSequence text) {
-        Matcher m = hexEnt.matcher(text);
+        Matcher m = HEX_ENT_PATTERN.matcher(text);
         if (!m.matches()) return -1;
 
         /* Try decoding the hexadecimal part. */
