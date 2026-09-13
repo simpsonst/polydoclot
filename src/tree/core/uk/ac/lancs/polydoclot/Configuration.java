@@ -584,9 +584,14 @@ public final class Configuration {
      * @param rawImports imported Javadoc installations to link to for
      * external program elements
      * 
-     * @param rawGroupTitles command-line supplied package/module
-     * groups, indexed by arbitrary but distinct keys; empty to use
+     * @param rawGroupTitles command-line-supplied package/module group
+     * titles, indexed by arbitrary but distinct keys; empty to use
      * group specifications embedded in overview source
+     * 
+     * @param rawGroupings command-line-supplied package/module
+     * groupings, indexed by the same keys as
+     * <samp>rawGroupTitles</samp>, and mapping to a set of package (or
+     * module?) names belonging to the group
      * 
      * @param outputDirectory the output directory for all files
      * 
@@ -615,6 +620,8 @@ public final class Configuration {
                          String rawShortTitle, String overviewFile,
                          List<? extends DocImport> rawImports,
                          Map<? extends Object, ? extends String> rawGroupTitles,
+                         Map<? extends Object,
+                             ? extends Collection<String>> rawGroupings,
                          Path outputDirectory, Path offlineDirectory,
                          Path diagnosticsDirectory, String hypertextLinkSuffix,
                          String tidyProgram, Path styleSource, URI style,
@@ -1304,6 +1311,7 @@ public final class Configuration {
                     groupTitles.put(entry.getKey(),
                                     newTextTree(entry.getValue()));
                 }
+                if (rawGroupings != null) moduleGroupings.putAll(rawGroupings);
             } else if (overviewDoc != null) {
                 /* Scan the overview text for @group and @package
                  * tags. */

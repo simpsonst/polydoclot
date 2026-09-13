@@ -1525,11 +1525,11 @@ public class Polydoclot implements Doclet {
             Configuration config =
                 new Configuration(environment, reporter, messageBundle,
                                   rawTitle, rawShortTitle, overviewFile,
-                                  imports, rawGroupTitles, outputDirectory,
-                                  offlineDirectory, diagnosticsDirectory,
-                                  hypertextLinkSuffix, tidyProgram, styleSource,
-                                  style, dirToJar, jarToVersion, sliceSpecs,
-                                  listUndocumented);
+                                  imports, rawGroupTitles, groupings,
+                                  outputDirectory, offlineDirectory,
+                                  diagnosticsDirectory, hypertextLinkSuffix,
+                                  tidyProgram, styleSource, style, dirToJar,
+                                  jarToVersion, sliceSpecs, listUndocumented);
             if (!config.isOkay()) return false;
 
             /* Generate slice-independent files. */
