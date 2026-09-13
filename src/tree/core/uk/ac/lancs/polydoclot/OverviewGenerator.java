@@ -169,7 +169,7 @@ public final class OverviewGenerator {
                                      .getTreeContent("package-list.table-summary"));
                 out.print("\">\n");
                 boolean someJarsIdentified = !config.dirToJar.isEmpty();
-                out.printf("<colgroup span=\"2\" class=\"package\">\n");
+                out.printf("<colgroup span=\"2\" class=\"element\">\n");
                 out.printf("</colgroup>\n");
                 out.printf("<col class=\"purpose\">\n");
                 if (false)
@@ -219,28 +219,18 @@ public final class OverviewGenerator {
                         out.print("<td class=\"name\">");
                         slice.writeElementReference(out::append, blockCtxt,
                                                     pkgDef, LinkContent.NORMAL);
+                        if (jar != null) out
+                            .printf("<br><samp class=\"jar\">%s</samp></td>\n",
+                                    blockCtxt.inline().escape(jar));
                         out.print("</td>\n");
-                        out.print("<td class=\"purpose\" rowspan=\"2\">");
+                        out.print("<td class=\"purpose\">");
                         if (!slice.writeSummary(out::append, blockCtxt, pkgDef))
                             slice
                                 .toHypertext(out::append, srcCtxt, blockCtxt,
                                              slice
                                                  .getSyntheticDescription(pkgDef));
-
                         out.print("</td>\n");
                         out.print("</tr>\n");
-
-                        out.printf("<tr class=\"package item %s%s\">\n",
-                                   even ? "even" : "odd",
-                                   config.deprecatedElements
-                                       .containsKey(pkgDef) ? " deprecated" :
-                                           "");
-                        if (jar != null) {
-                            out.printf("<td colspan=\"2\" class=\"jar\"><samp>%s</samp></td>\n",
-                                       blockCtxt.inline().escape(jar));
-                        } else if (someJarsIdentified) {
-                            out.printf("<td></td>\n");
-                        }
                         out.print("</tr>\n");
 
                         even = !even;

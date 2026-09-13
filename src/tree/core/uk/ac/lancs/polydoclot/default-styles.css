@@ -257,7 +257,7 @@ body.javadoc table.javadoc-members > tbody > tr.item >
     font-family: serif;
 }
 
-body.javadoc table.javadoc-package-list > tbody > tr > td.jar {
+body.javadoc table.javadoc-package-list > tbody > tr.item.package > td.name > .jar {
     font-size: 80%;
     vertical-align: top;
 }
