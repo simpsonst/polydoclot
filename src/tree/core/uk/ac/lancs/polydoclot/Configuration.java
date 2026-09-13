@@ -1208,7 +1208,6 @@ public final class Configuration {
                 ElementQualities getQualities(Element elem) {
                     /* We don't concern ourselves with excluded
                      * types. */
-                    Element container = null;
                     switch (elem.getKind()) {
                     case CLASS:
                     case INTERFACE:
@@ -1229,7 +1228,7 @@ public final class Configuration {
                     case METHOD:
                     case FIELD:
                     case CONSTRUCTOR:
-                        container = elem.getEnclosingElement();
+                        Element container = elem.getEnclosingElement();
                         if (!env.getIncludedElements().contains(container))
                             return null;
                         break;
