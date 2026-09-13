@@ -2890,8 +2890,8 @@ public final class Configuration {
         if (orig == null) return null;
         if (orig.size() != 1) return orig;
         DocTree first = orig.get(0);
-        if (first instanceof TextTree)
-            return unflattenDoc(((TextTree) first).getBody());
+        if (first instanceof TextTree textTree)
+            return unflattenDoc(textTree.getBody());
         return orig;
     }
 
