@@ -121,7 +121,7 @@ public class ModuleGenerator {
                 out.printf("<div class=\"javadoc-matter\">\n");
 
                 out.printf("<div class=\"javadoc-head\">\n");
-                out.printf("<h1><span>%s</span></h1>\n",
+                out.printf("<h1 class=\"resized\"><span>%s</span></h1>\n",
                            slice.toHypertext(inCtxt, blockCtxt, slice
                                .macroFormatDoc("page.heading.module", blockCtxt
                                    .escaper().escape(moduleProps))));
@@ -149,9 +149,9 @@ public class ModuleGenerator {
 
                 out.printf("<div class=\"javadoc-description\">\n");
                 if (DocUtils.hasDescription(docs, false)) {
-                    out.printf("<h2><span>%s</span></h2>\n", blockCtxt
-                        .escape(slice
-                            .getContent("section.heading.module.description")));
+                    out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                               blockCtxt.escape(slice
+                                   .getContent("section.heading.module.description")));
 
                     out.printf("<div class=\"body\">\n");
                     out.printf("<p>%s\n", slice

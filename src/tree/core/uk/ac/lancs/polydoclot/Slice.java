@@ -869,7 +869,7 @@ public final class Slice {
                         2 + Integer.parseInt(node.getTagName().substring(1));
                     if (outCtxt.canMarkUpBlock()) {
                         out.accept("\n<h" + level);
-                        out.accept("><span>");
+                        out.accept(" class=\"resized\"><span>");
                         toHypertext(out, inCtxt, outCtxt, content);
                         out.accept("</span></h" + level);
                         out.accept(">\n");
@@ -1232,12 +1232,12 @@ public final class Slice {
                                     Collection<? extends TypeElement> roots) {
         final int depth = getSubtypeDepth(config.knownDirectSubtypes, roots);
 
-        out.printf("<table class=\"javadoc-hierarchy\" summary=\"");
+        out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n", blockCtxt
+            .escape(getContent("section.heading.class-hierarchy")));
+        out.printf("<table class=\"javadoc-hierarchy wide\" summary=\"");
         toHypertext(out::append, SourceContext.EMPTY, blockCtxt.inAttribute(),
                     getTreeContent("class-hierarchy.table-summary"));
         out.printf("\">\n");
-        out.printf("<caption>%s</caption>\n", blockCtxt
-            .escape(getContent("section.heading.class-hierarchy")));
         out.printf("<colgroup class=\"class\">\n");
         for (int i = 0; i < depth; i++)
             out.printf("<col />\n");
@@ -1344,12 +1344,16 @@ public final class Slice {
         final boolean deprecated = config.deprecatedElements.containsKey(elem);
         final DocCommentTree comm = config.docTrees.getDocCommentTree(elem);
 
-        out.printf("<table class=\"javadoc-qualities %s%s\" summary=\"",
+        out.printf("<table class=\"javadoc-qualities wide %s%s\" summary=\"",
                    outCtxt.escape(DocUtils.getStyleClass(elem)),
                    deprecated ? " deprecated" : "");
         toHypertext(out::append, SourceContext.EMPTY, outCtxt.inAttribute(),
                     getTreeContent("quality.table-summary"));
         out.print("\">\n");
+        out.print("<colgroup>\n");
+        out.print("<col class=\"quality\">\n");
+        out.print("<col class=\"value\">\n");
+        out.print("</colgroup>\n");
 
         out.printf("<tr class=\"summary\"><td class=\"name\">%s</td>"
             + " <td class=\"value\">",
@@ -1404,8 +1408,9 @@ public final class Slice {
             } else {
                 writeElementReference(out::append, outCtxt, pkg,
                                       LinkContent.NORMAL);
-                out.print("<br/>");
+                out.print("<div class=\"purpose\">");
                 writeSummary(out::append, outCtxt, pkg);
+                out.print("</div>");
             }
             out.printf("</td>\n");
             out.printf("</tr>\n");
@@ -1544,7 +1549,7 @@ public final class Slice {
         DocUtils.getBlockTags(doc, SpecTree.class).forEach(specTags::add);
         if (specTags.isEmpty()) return;
         out.print("<div class=\"javadoc-spec\">\n");
-        out.printf("<h2><span>%s</span></h2>\n",
+        out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
                    outCtxt.escape(getContent("section.heading.specs")));
         out.print("<ul>\n");
         for (var tag : specTags) {
@@ -1581,7 +1586,7 @@ public final class Slice {
         DocUtils.getSeeTags(doc).forEach(seeTags::add);
         if (seeTags.isEmpty()) return;
         out.print("<div class=\"javadoc-see-also\">\n");
-        out.printf("<h2><span>%s</span></h2>\n",
+        out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
                    outCtxt.escape(getContent("section.heading.see-also")));
         out.print("<ul>\n");
         for (SeeTree tag : seeTags) {
@@ -1651,7 +1656,7 @@ public final class Slice {
         }
 
         out.print("<div class=\"javadoc-authors\">\n");
-        out.printf("<h2><span>%s</span></h2>\n",
+        out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
                    outCtxt.escape(getContent("section.heading.authors")));
         if (!referencedAuthors.isEmpty() || !unknownAuthors.isEmpty()) {
             out.print("<ul class=\"authors\">\n");
@@ -2044,8 +2049,12 @@ public final class Slice {
         PrintWriter out =
             new PrintWriter(new OutputStreamWriter(byteOut,
                                                    StandardCharsets.UTF_8));
-        out.printf("<!DOCTYPE html PUBLIC"
-            + " \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+        if (true) {
+            out.printf("<!DOCTYPE html>\n");
+        } else {
+            out.printf("<!DOCTYPE html PUBLIC"
+                + " \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
+        }
         return out;
     }
 

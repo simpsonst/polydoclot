@@ -228,7 +228,7 @@ public final class OverviewGenerator {
             out.printf("<div class=\"javadoc-matter\">\n");
 
             out.printf("<div class=\"javadoc-head\">\n");
-            out.print("<h1><span>");
+            out.print("<h1 class=\"resized\"><span>");
             slice.toHypertext(out::append, inCtxt, blockCtxt, config.title);
             out.print("</span></h1>\n");
 
@@ -242,18 +242,16 @@ public final class OverviewGenerator {
 
             if (!config.groupedPackages.isEmpty() ||
                 !config.groupedModules.isEmpty()) {
-                out.print("<table class=\"javadoc-package-list\" summary=\"");
+                out.print("<table class=\"javadoc-package-list wide\" summary=\"");
                 slice
                     .toHypertext(out::append, SourceContext.EMPTY,
                                  blockCtxt.inAttribute(), slice
                                      .getTreeContent("package-list.table-summary"));
                 out.print("\">\n");
                 boolean someJarsIdentified = !config.dirToJar.isEmpty();
-                out.printf("<colgroup>\n");
-                if (someJarsIdentified) out.printf("<col class=\"jar\">\n");
-                out.printf("<col class=\"package\">\n");
-                out.printf("<col class=\"purpose\">\n");
+                out.printf("<colgroup span=\"2\" class=\"package\">\n");
                 out.printf("</colgroup>\n");
+                out.printf("<col class=\"purpose\">\n");
                 if (false)
                     out.printf("<caption>%s</caption>\n", blockCtxt.escape(slice
                         .getContent("section.heading.overview.modules-packages")));
@@ -279,12 +277,13 @@ public final class OverviewGenerator {
                                  b.getQualifiedName().toString()));
                     out.print("<tbody>\n");
                     out.print("<tr class=\"heading\">");
-                    if (someJarsIdentified) out.print("<th></th>");
-                    out.print("<th colspan=\"2\">");
+                    out.print("<th colspan=\"3\">");
                     slice.toHypertext(out::append, inCtxt, blockCtxt, title);
                     out.print("</th>\n");
                     out.print("</tr>\n");
+
                     boolean even = true;
+
                     for (PackageElement pkgDef : pkgList) {
                         SourceContext srcCtxt =
                             SourceContext.forElement(pkgDef);
@@ -293,14 +292,7 @@ public final class OverviewGenerator {
                                    config.deprecatedElements
                                        .containsKey(pkgDef) ? " deprecated" :
                                            "");
-                        even = !even;
                         String jar = config.identifyJar(pkgDef);
-                        if (jar != null) {
-                            out.printf("<td class=\"jar\"><samp>%s</samp></td>\n",
-                                       blockCtxt.inline().escape(jar));
-                        } else if (someJarsIdentified) {
-                            out.printf("<td></td>\n");
-                        }
                         out.printf("<td class=\"kind\">%s</td>\n", blockCtxt
                             .escape(slice
                                 .getContent("module-package.kind.package")));
@@ -308,7 +300,7 @@ public final class OverviewGenerator {
                         slice.writeElementReference(out::append, blockCtxt,
                                                     pkgDef, LinkContent.NORMAL);
                         out.print("</td>\n");
-                        out.print("<td class=\"purpose\">");
+                        out.print("<td class=\"purpose\" rowspan=\"2\">");
                         if (!slice.writeSummary(out::append, blockCtxt, pkgDef))
                             slice
                                 .toHypertext(out::append, srcCtxt, blockCtxt,
@@ -317,12 +309,27 @@ public final class OverviewGenerator {
 
                         out.print("</td>\n");
                         out.print("</tr>\n");
+
+                        out.printf("<tr class=\"package item %s%s\">\n",
+                                   even ? "even" : "odd",
+                                   config.deprecatedElements
+                                       .containsKey(pkgDef) ? " deprecated" :
+                                           "");
+                        if (jar != null) {
+                            out.printf("<td colspan=\"2\" class=\"jar\"><samp>%s</samp></td>\n",
+                                       blockCtxt.inline().escape(jar));
+                        } else if (someJarsIdentified) {
+                            out.printf("<td></td>\n");
+                        }
+                        out.print("</tr>\n");
+
+                        even = !even;
                     }
+
                     for (ModuleElement mod : modList) {
                         SourceContext srcCtxt = SourceContext.forElement(mod);
                         out.printf("<tr class=\"module %s\">\n",
                                    even ? "even" : "odd");
-                        even = !even;
                         out.printf("<td class=\"kind\">%s</td>\n", blockCtxt
                             .escape(slice
                                 .getContent("module-package.kind.module")));
@@ -339,6 +346,8 @@ public final class OverviewGenerator {
 
                         out.print("</td>\n");
                         out.print("</tr>\n");
+
+                        even = !even;
                     }
                     out.print("</tbody>\n");
                 }
@@ -347,8 +356,9 @@ public final class OverviewGenerator {
 
             out.printf("<div class=\"javadoc-description\">\n");
             if (DocUtils.hasDescription(config.overviewDoc, false)) {
-                out.printf("<h2><span>%s</span></h2>\n", blockCtxt.escape(slice
-                    .getContent("section.heading.overview.description")));
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           blockCtxt.escape(slice
+                               .getContent("section.heading.overview.description")));
 
                 out.printf("<div class=\"body\">\n");
                 out.printf("<p>%s\n",
@@ -374,8 +384,9 @@ public final class OverviewGenerator {
 
             if (!config.referencedAuthors.isEmpty()) {
                 out.print("<div class=\"javadoc-authors\">\n");
-                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
-                    .escape(slice.getContent("section.heading.authors")));
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           blockCtxt.escape(slice
+                               .getContent("section.heading.authors")));
                 out.print("<div class=\"definitions\">\n");
                 for (String authorKey : config.referencedAuthors)
                     slice.writeAuthor(out, inCtxt, blockCtxt,
@@ -386,8 +397,9 @@ public final class OverviewGenerator {
 
             if (true && config.deprecatedElements.size() > 0) {
                 out.printf("<div class=\"deprecated\">");
-                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
-                    .escape(slice.getContent("section.heading.deprecated")));
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           blockCtxt.escape(slice
+                               .getContent("section.heading.deprecated")));
                 List<Element> elems = config.deprecatedElements.entrySet()
                     .stream().filter(e -> e.getValue().isExplicit())
                     .map(Map.Entry::getKey).sorted(this::compareElements)
@@ -396,7 +408,7 @@ public final class OverviewGenerator {
                 // List<Element> elems =
                 // new ArrayList<>(config.deprecatedElements);
                 Collections.sort(elems, this::compareElements);
-                out.printf("<ul>\n");
+                out.printf("<ul class=\"element-index\">\n");
                 for (Element elem : elems) {
                     out.print("\n<li>");
                     slice.writeElementReference(out::append, blockCtxt, elem,
@@ -409,12 +421,13 @@ public final class OverviewGenerator {
             if (config.listUndocumented &&
                 slice.countUndocumentedElements() > 0) {
                 out.printf("<div class=\"javadoc-undocumented\">\n");
-                out.printf("<h2><span>%s</span></h2>\n", blockCtxt
-                    .escape(slice.getContent("section.heading.undocumented")));
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           blockCtxt.escape(slice
+                               .getContent("section.heading.undocumented")));
                 List<Element> elems = new ArrayList<>();
                 slice.getUndocumentedElements(elems);
                 Collections.sort(elems, this::compareElements);
-                out.printf("<ul>\n");
+                out.printf("<ul class=\"element-index\">\n");
                 for (Element elem : elems) {
                     out.print("\n<li>");
                     slice.writeElementReference(out::append, blockCtxt, elem,

@@ -230,7 +230,7 @@ public final class ClassGenerator {
                 out.printf("<div class=\"javadoc-matter\">\n");
 
                 out.printf("<div class=\"javadoc-head\">\n");
-                out.printf("<h1><span>");
+                out.printf("<h1 class=\"resized\"><span>");
                 slice.toHypertext(out::append, typeContext, blockContext, slice
                     .macroFormatDoc("page.heading.class", blockContext
                         .attributeEscaper().escape(typeDefProps)));
@@ -262,9 +262,9 @@ public final class ClassGenerator {
 
                 out.printf("<div class=\"javadoc-description\">\n");
                 if (DocUtils.hasDescription(typeDoc, false)) {
-                    out.printf("<h2><span>%s</span></h2>\n", escaper
-                        .escape(slice
-                            .getContent("section.heading.class.description")));
+                    out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                               escaper.escape(slice
+                                   .getContent("section.heading.class.description")));
                     out.printf("<div class=\"body\">\n");
                     out.printf("<p>%s\n",
                                slice.toHypertext(typeContext, blockContext,
@@ -359,14 +359,20 @@ public final class ClassGenerator {
                 consumers.removeAll(instanceMethods);
                 xforms.removeAll(instanceMethods);
 
-                out.print("<table class=\"javadoc-members\" summary=\"");
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           escaper.escape(slice
+                               .getContent("class-members.caption")));
+                out.print("<table class=\"javadoc-members wide\" summary=\"");
                 slice
                     .toHypertext(out::append, SourceContext.EMPTY,
                                  blockContext.inAttribute(), slice
                                      .getTreeContent("class-members.table-summary"));
                 out.print("\">\n");
-                out.printf("<caption>%s</caption>\n", escaper
-                    .escape(slice.getContent("class-members.caption")));
+                out.print("<colgroup>\n");
+                out.print("<col class=\"modifiers\">\n");
+                out.print("<col class=\"return-type\">\n");
+                out.print("<col class=\"name-purpose\">\n");
+                out.print("</colgroup>\n");
                 /* Columns are: modifiers and type variables; return
                  * type; name; parameters. */
                 writeMemberList(typeDef, "classes static", "static-classes",
@@ -397,6 +403,22 @@ public final class ClassGenerator {
                 writeMemberList(typeDef, "methods instance", "methods", out,
                                 blockContext, instanceMethods,
                                 Collections.emptySet(), pseudoConstructors);
+                out.printf("</table>\n");
+
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           escaper.escape(slice
+                               .getContent("class-usage.caption")));
+                out.print("<table class=\"javadoc-members wide\" summary=\"");
+                slice
+                    .toHypertext(out::append, SourceContext.EMPTY,
+                                 blockContext.inAttribute(), slice
+                                     .getTreeContent("class-members.table-summary"));
+                out.print("\">\n");
+                out.print("<colgroup>\n");
+                out.print("<col class=\"modifiers\">\n");
+                out.print("<col class=\"return-type\">\n");
+                out.print("<col class=\"name-purpose\">\n");
+                out.print("</colgroup>\n");
                 writeMemberList(typeDef, "producers", "acquisition", out,
                                 blockContext, producers, Collections.emptySet(),
                                 pseudoConstructors);
@@ -588,7 +610,7 @@ public final class ClassGenerator {
             out.printf("<div class=\"javadoc-matter\">\n");
 
             out.printf("<div class=\"javadoc-head\">\n");
-            out.printf("<h1><span>");
+            out.printf("<h1 class=\"resized\"><span>");
             slice.toHypertext(out::append, membContext, membOutCtxt, slice
                 .macroFormatDoc("page.heading.member",
                                 membOutCtxt.escaper().escape(memberProps)));
@@ -622,9 +644,9 @@ public final class ClassGenerator {
                                 !memb.getModifiers()
                                     .contains(Modifier.STATIC) &&
                                     memb.getKind() == ElementKind.METHOD)) {
-                out.printf("<h2><span>%s</span></h2>\n", membOutCtxt
-                    .escape(slice
-                        .getContent("section.heading.member.description")));
+                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                           membOutCtxt.escape(slice
+                               .getContent("section.heading.member.description")));
                 out.printf("<div class=\"body\">\n");
                 out.printf("<p>%s\n",
                            slice.toHypertext(membContext, membOutCtxt,
@@ -645,7 +667,7 @@ public final class ClassGenerator {
                         for (UnknownBlockTagTree def : DocUtils
                             .getUnknownBlockTags(membDoc, "apiNote")) {
                             out.printf("<div class=\"api-note\">\n");
-                            out.printf("<h3><span>");
+                            out.printf("<h3 class=\"resized\"><span>");
                             slice
                                 .toHypertext(out::append, membContext,
                                              membOutCtxt,
@@ -664,7 +686,7 @@ public final class ClassGenerator {
                         for (UnknownBlockTagTree def : DocUtils
                             .getUnknownBlockTags(membDoc, "implSpec")) {
                             out.printf("<div class=\"impl-spec\">\n");
-                            out.printf("<h3><span>");
+                            out.printf("<h3 class=\"resized\"><span>");
                             slice
                                 .toHypertext(out::append, membContext,
                                              membOutCtxt,
@@ -683,7 +705,7 @@ public final class ClassGenerator {
                         for (UnknownBlockTagTree def : DocUtils
                             .getUnknownBlockTags(membDoc, "implNote")) {
                             out.printf("<div class=\"impl-note\">\n");
-                            out.printf("<h3><span>");
+                            out.printf("<h3 class=\"resized\"><span>");
                             slice
                                 .toHypertext(out::append, membContext,
                                              membOutCtxt,
@@ -1178,10 +1200,10 @@ public final class ClassGenerator {
 
                 if (!slice
                     .writeSummary(out::append, outCtxt, memb,
-                                  () -> out.print("<div class=\"purpose\"><p>"),
+                                  () -> out.print("<div class=\"purpose\">"),
                                   () -> out.printf("</div>"))) {
                     if (!inherited) {
-                        out.print("<div class=\"purpose\"><p>");
+                        out.print("<div class=\"purpose\">");
                         slice.toHypertext(out::append, SourceContext.EMPTY,
                                           outCtxt,
                                           slice.getSyntheticDescription(memb));

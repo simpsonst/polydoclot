@@ -161,7 +161,7 @@ public final class PackageGenerator {
                 out.printf("<div class=\"javadoc-matter\">\n");
 
                 out.printf("<div class=\"javadoc-head\">\n");
-                out.printf("<h1><span>%s</span></h1>\n",
+                out.printf("<h1 class=\"resized\"><span>%s</span></h1>\n",
                            slice.toHypertext(pkgCtxt, blockCtxt, slice
                                .macroFormatDoc("page.heading.package", blockCtxt
                                    .escaper().escape(pkgDefProps))));
@@ -189,9 +189,9 @@ public final class PackageGenerator {
 
                 out.printf("<div class=\"javadoc-description\">\n");
                 if (DocUtils.hasDescription(pkgDoc, false)) {
-                    out.printf("<h2><span>%s</span></h2>\n", escaper
-                        .escape(slice
-                            .getContent("section.heading.package.description")));
+                    out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                               escaper.escape(slice
+                                   .getContent("section.heading.package.description")));
                     out.printf("<div class=\"body\">\n");
                     out.print("<p>");
                     slice.toHypertext(out::append, pkgCtxt, blockCtxt,
@@ -249,12 +249,17 @@ public final class PackageGenerator {
                     }
                 }
 
-                out.print("<table class=\"javadoc-class-list\" summary=\"");
+                out.print("<table class=\"javadoc-class-list wide\" summary=\"");
                 slice
                     .toHypertext(out::append, SourceContext.EMPTY,
                                  blockCtxt.inAttribute(), slice
                                      .getTreeContent("class-list.table-summary"));
                 out.print("\">\n");
+                out.print("<colgroup>\n");
+                out.print("<col class=\"kind\">\n");
+                out.print("<col class=\"type\">\n");
+                out.print("<col class=\"purpose\">\n");
+                out.print("</colgroup>\n");
                 out.printf("<thead>\n");
                 out.printf("<tr><th class=\"kind\">%s</th>"
                     + " <th class=\"name\">%s</th>"

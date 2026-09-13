@@ -1,5 +1,54 @@
 @charset "UTF-8";
 
+body.javadoc {
+    padding: 0;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+body.javadoc > .javadoc-matter {
+    margin-left: 0;
+    margin-right: 0;
+    border: none;
+}
+
+body.javadoc .resized {
+    font-weight: normal;
+    font-family: sans-serif;
+    font-size: 100%;
+}
+
+body.javadoc .resized > span {
+    font-weight: bold;
+}
+
+body.javadoc h1.resized > span {
+    font-size: 200%;
+}
+
+body.javadoc h2.resized > span  {
+    font-size: 180%;
+}
+
+body.javadoc h3.resized > span  {
+    font-size: 160%;
+}
+
+body.javadoc h4.resized > span  {
+    font-size: 140%;
+}
+
+body.javadoc h5.resized > span  {
+    font-size: 120%;
+}
+
+body.javadoc h6.resized > span  {
+    font-size: 100%;
+}
+
+
+
+
 body.javadoc span.wbr::before {
     content: "\200b";
 }
@@ -33,11 +82,17 @@ body.javadoc .javadoc-terminals > * > tr.item > .name,
 body.javadoc .javadoc-terminals > * > tr.item > .descr,
 body.javadoc .javadoc-members > * > tr > .modifiers,
 body.javadoc .javadoc-members > * > tr.heading > *,
-body.javadoc .javadoc-members > * > tr > .name-purpose,
+body.javadoc .javadoc-members > * > tr > .name-purpose {
+    text-align: left;
+}
+
 body.javadoc .javadoc-package-list > caption,
 body.javadoc .javadoc-package-list > * > tr.heading > *,
 body.javadoc .javadoc-package-list > * > tr > .name,
-body.javadoc .javadoc-package-list > * > tr > .purpose,
+body.javadoc .javadoc-package-list > * > tr > .purpose {
+    text-align: left;
+}
+
 body.javadoc .javadoc-class-list > * > tr > .name,
 body.javadoc .javadoc-class-list > * > tr > .purpose,
 body.javadoc .javadoc-qualities > tbody > tr > .value,
@@ -61,10 +116,12 @@ body.javadoc .javadoc-hierarchy > * > tr > * {
     vertical-align: baseline;
 }
 
+/*
 body.javadoc pre.java {
     margin: 0;
     padding: 0;
 }
+*/
 
 body.javadoc .javadoc-members > tbody > .item.inherited {
     opacity: 0.4;
@@ -77,4 +134,237 @@ body.javadoc .javadoc-subtypes > ul {
 body.javadoc .javadoc-undocumented > ul {
     column-width: 18em;
     column-fill: balance;
+}
+
+
+.javadoc-matter {
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+
+@media all and (min-width: 52em) {
+    .javadoc-matter {
+	padding-left: 0;
+	padding-right: 0;
+    }
+
+    /* Width-limited top-level elements should be constrained. */
+    .javadoc-matter p,
+    .javadoc-matter .resized,
+    .javadoc-matter ul,
+    .javadoc-matter ol,
+    .javadoc-matter dl,
+    .javadoc-matter pre,
+    .javadoc-matter table,
+    .javadoc-matter blockquote,
+    .javadoc-matter .javadoc-purpose {
+	margin-left: calc((100% - 52em) / 2 + 1em);
+	margin-right: calc((100% - 52em) / 2 + 1em);
+    }
+}
+
+/* Nested width-limited elements should not be constrained. */
+.javadoc-matter .resized p,
+.javadoc-matter .resized .resized,
+.javadoc-matter .resized ul,
+.javadoc-matter .resized ol,
+.javadoc-matter .resized dl,
+.javadoc-matter .resized pre,
+.javadoc-matter .resized table,
+.javadoc-matter .resized blockquote,
+.javadoc-matter ul p,
+.javadoc-matter ul .resized,
+.javadoc-matter ul ul,
+.javadoc-matter ul ol,
+.javadoc-matter ul dl,
+.javadoc-matter ul pre,
+.javadoc-matter ul table,
+.javadoc-matter ul blockquote,
+.javadoc-matter ol p,
+.javadoc-matter ol .resized,
+.javadoc-matter ol ul,
+.javadoc-matter ol ol,
+.javadoc-matter ol dl,
+.javadoc-matter ol pre,
+.javadoc-matter ol table,
+.javadoc-matter ol blockquote,
+.javadoc-matter dl p,
+.javadoc-matter dl .resized,
+.javadoc-matter dl ul,
+.javadoc-matter dl ol,
+.javadoc-matter dl dl,
+.javadoc-matter dl pre,
+.javadoc-matter dl table,
+.javadoc-matter dl blockquote,
+.javadoc-matter pre p,
+.javadoc-matter pre .resized,
+.javadoc-matter pre ul,
+.javadoc-matter pre ol,
+.javadoc-matter pre dl,
+.javadoc-matter pre pre,
+.javadoc-matter pre table,
+.javadoc-matter pre blockquote,
+.javadoc-matter table p,
+.javadoc-matter table .resized,
+.javadoc-matter table ul,
+.javadoc-matter table ol,
+.javadoc-matter table dl,
+.javadoc-matter table pre,
+.javadoc-matter table table,
+.javadoc-matter table blockquote,
+.javadoc-matter blockquote p,
+.javadoc-matter blockquote .resized,
+.javadoc-matter blockquote ul,
+.javadoc-matter blockquote ol,
+.javadoc-matter blockquote dl,
+.javadoc-matter blockquote pre,
+.javadoc-matter blockquote table,
+.javadoc-matter blockquote blockquote {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.javadoc-matter .wide {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body.javadoc table.javadoc-qualities {
+    border: double 3px;
+}
+
+body.javadoc table.javadoc-hierarchy > tbody > tr.item > td.purpose,
+body.javadoc table.javadoc-qualities > tbody > tr.summary > td.value,
+body.javadoc table.javadoc-qualities > tbody > tr.package >
+		td.value > .purpose,
+body.javadoc table.javadoc-package-list > tbody > tr > td.purpose,
+body.javadoc table.javadoc-class-list > tbody > tr > td.purpose,
+body.javadoc table.javadoc-members > tbody > tr.item >
+		td.name-purpose > .purpose {
+    max-width: 40em;
+}
+
+body.javadoc .javadoc-description > .body,
+body.javadoc table.javadoc-hierarchy > tbody > tr.item > td.purpose,
+body.javadoc table.javadoc-qualities > tbody > tr.summary > td.value,
+body.javadoc table.javadoc-qualities > tbody > tr.package >
+		td.value > .purpose,
+body.javadoc table.javadoc-package-list > tbody > tr > td.purpose,
+body.javadoc table.javadoc-class-list > tbody > tr > td.purpose,
+body.javadoc table.javadoc-members > tbody > tr.item >
+		td.name-purpose > .purpose {
+    font-family: serif;
+}
+
+body.javadoc table.javadoc-package-list > tbody > tr > td.jar {
+    font-size: 80%;
+    vertical-align: top;
+}
+
+body.javadoc table.javadoc-members > tbody > tr.item >
+.name-purpose > .sig > .params > pre.params,
+body.javadoc table.javadoc-members > tbody > tr.item >
+		.name-purpose > .sig > .name {
+    margin-bottom: 0;
+}
+
+body.javadoc table.javadoc-members > tbody > tr.item >
+.name-purpose > .sig > .params > pre.params + pre.params {
+    margin-top: 0;
+}
+
+body.javadoc table.javadoc-terminals,
+body.javadoc table.javadoc-hierarchy,
+body.javadoc table.javadoc-members,
+body.javadoc table.javadoc-class-list,
+body.javadoc table.javadoc-package-list {
+    border: solid 2px;
+    border-collapse: collapse;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+}
+
+body.javadoc .javadoc-context > pre {
+    border: solid 1px;
+}
+
+body.javadoc table.javadoc-members > tbody > tr.item > td.return-type {
+    padding-right: 1ex;
+}
+
+body.javadoc table.javadoc-terminals > tbody + tbody > tr.heading > th,
+body.javadoc table.javadoc-members > tbody + tbody > tr.heading > th,
+body.javadoc table.javadoc-package-list > tbody + tbody > tr.heading > th {
+    border-top: double 3px;
+}
+
+body.javadoc .element-index {
+    column-width: 20em;
+}
+
+@media screen {
+    body.javadoc {
+	background-color: #eee;
+	color: #000;
+    }
+
+    body.javadoc a:link,
+    body.javadoc a:visited,
+    body.javadoc a:hover,
+    body.javadoc a:active {
+	background-color: transparent;
+	background-image: none;
+    }
+		       
+    body.javadoc a:link {
+	color: rgb(0, 0, 238);
+    }
+
+    body.javadoc a:visited {
+	color: #551a8b;
+    }
+
+    body.javadoc a:hover {
+	color: #c70;
+    }
+
+    body.javadoc a:active {
+	color: #f00;
+    }
+
+    body.javadoc table.javadoc-qualities {
+	background-color: #fff;
+	border-style: outset;
+    }
+
+    body.javadoc table.javadoc-terminals > tbody > tr.heading,
+    body.javadoc table.javadoc-members > tbody.group > tr.heading,
+    body.javadoc table.javadoc-class-list > thead > tr,
+    body.javadoc table.javadoc-hierarchy > thead > tr,
+    body.javadoc table.javadoc-package-list > tbody > tr.heading {
+	background-color: #eca;
+    }
+
+    body.javadoc table.javadoc-terminals > tbody > tr.item.even,
+    body.javadoc table.javadoc-members > tbody.group > tr.item.even,
+    body.javadoc table.javadoc-class-list > tbody > tr.item.even,
+    body.javadoc table.javadoc-hierarchy > tbody > tr.item.even,
+    body.javadoc table.javadoc-package-list > tbody > tr.item.even {
+	background-color: #fff;
+    }
+
+    body.javadoc table.javadoc-terminals > tbody > tr.item.odd,
+    body.javadoc table.javadoc-members > tbody.group > tr.item.odd,
+    body.javadoc table.javadoc-class-list > tbody > tr.item.odd,
+    body.javadoc table.javadoc-hierarchy > tbody > tr.item.odd,
+    body.javadoc table.javadoc-package-list > tbody > tr.item.odd {
+	background-color: #eef;
+    }
+
+    body.javadoc .javadoc-context > pre {
+	background-color: #fff;
+	border: inset 2px;
+	padding: 0.5ex;
+    }
 }
