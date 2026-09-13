@@ -2464,16 +2464,17 @@ public final class Configuration {
                 case ENUM_CONSTANT:
                 case FIELD:
                     /* A field or enumeration constant matches if we're
-                     * not looking for an executable member. */
-                    if (resolvedParams != null) continue;
-                    break;
+                     * not looking for an executable member. But we
+                     * are! */
+                    assert resolvedParams != null;
+                    continue;
 
                 case CONSTRUCTOR:
                 case METHOD:
                     /* A constructor or method matches if it has the
                      * same number of parameters, and all of the same
                      * types. */
-                    if (resolvedParams == null) continue;
+                    assert resolvedParams != null;
                     ExecutableElement execMember = (ExecutableElement) member;
                     if (execMember.getParameters().size()
                         != resolvedParams.size()) continue;
