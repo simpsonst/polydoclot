@@ -100,7 +100,7 @@ public final class HttpSyntax {
      * characters.
      */
     public static class Tokenizer {
-        private char[] text;
+        private final char[] text;
 
         private int pos = 0;
 
