@@ -41,7 +41,7 @@ package uk.ac.lancs.polydoclot;
  * 
  * @author simpsons
  */
-enum Deprecation {
+public enum Deprecation {
     /**
      * The element is not deprecated.
      */
