@@ -219,9 +219,9 @@ public final class OverviewGenerator {
                         out.print("<td class=\"name\">");
                         slice.writeElementReference(out::append, blockCtxt,
                                                     pkgDef, LinkContent.NORMAL);
-                        if (jar != null) out
-                            .printf("<br><samp class=\"jar\">%s</samp></td>\n",
-                                    blockCtxt.inline().escape(jar));
+                        if (jar != null)
+                            out.printf("<br><samp class=\"jar\">%s</samp>\n",
+                                       blockCtxt.inline().escape(jar));
                         out.print("</td>\n");
                         out.print("<td class=\"purpose\">");
                         if (!slice.writeSummary(out::append, blockCtxt, pkgDef))
@@ -230,7 +230,6 @@ public final class OverviewGenerator {
                                              slice
                                                  .getSyntheticDescription(pkgDef));
                         out.print("</td>\n");
-                        out.print("</tr>\n");
                         out.print("</tr>\n");
 
                         even = !even;
