@@ -413,8 +413,28 @@ public final class Slice {
                             Iterable<? extends DocTree> doc) {
         doc = resolveTextTags(doc);
         DocTreeVisitor<Void, Void> visitor = new SimpleDocTreeVisitor<>() {
+            List<Map.Entry<String, OutputContext>> ctxtStack =
+                new ArrayList<>();
+
+            private void push(String tag, OutputContext ctxt) {
+                ctxtStack.add(Map.entry(tag, ctxt));
+            }
+
+            private void pop(String tag) {
+                while (!ctxtStack.isEmpty()) {
+                    var end = ctxtStack.remove(ctxtStack.size() - 1);
+                    if (end.getKey().equalsIgnoreCase(tag)) return;
+                }
+            }
+
+            private OutputContext top() {
+                if (ctxtStack.isEmpty()) return outCtxt;
+                return ctxtStack.get(ctxtStack.size() - 1).getValue();
+            }
+
             @Override
             public Void visitDocRoot(DocRootTree node, Void p) {
+                var outCtxt = top();
                 out.accept(outCtxt.escape(
                                           Utils
                                               .relativize(outCtxt.location(),
@@ -434,6 +454,8 @@ public final class Slice {
 
             @Override
             public Void visitEndElement(EndElementTree node, Void p) {
+                pop(node.getName().toString());
+                var outCtxt = top();
                 switch (node.getName().toString()) {
                 case "div":
                 case "p":
@@ -472,6 +494,7 @@ public final class Slice {
 
             @Override
             public Void visitInheritDoc(InheritDocTree node, Void p) {
+                var outCtxt = top();
                 /* Create a sequence of extended classes or overridden
                  * elements to examine. */
                 final Collection<TypeElement> candTypes;
@@ -646,94 +669,116 @@ public final class Slice {
 
             @Override
             public Void visitStartElement(StartElementTree node, Void p) {
-                switch (node.getName().toString()) {
-                case "div":
-                case "p":
-                case "address":
-                case "h1":
-                case "h2":
-                case "h3":
-                case "h4":
-                case "h5":
-                case "h6":
-                case "ul":
-                case "ol":
-                case "dl":
-                case "pre":
-                case "blockquote":
-                case "form":
-                case "fieldset":
-                case "hr":
-                case "noscript":
-                case "table":
-                    if (!outCtxt.canMarkUpBlock()) return null;
-                    break;
-
-                case "a":
-                    if (!outCtxt.canLink()) return null;
-                    // Fall through
-                default:
-                    if (!outCtxt.canMarkUpInline()) return null;
-                    break;
-                }
-
-                out.accept("<");
-                out.accept(node.getName());
-                for (DocTree dattr : node.getAttributes()) {
-                    AttributeTree attr = (AttributeTree) dattr;
-                    out.accept(" ");
-                    out.accept(attr.getName());
-                    List<? extends DocTree> value = attr.getValue();
-                    /* If the author writes the likes of <a href="foo">,
-                     * he likely assumes a package- or class-relative
-                     * context, but that won't work in general because
-                     * class members are not output to the same file as
-                     * the class itself. We have to work out what the
-                     * author originally meant, and re-relativize it
-                     * against what it is now. */
-                    if (DocUtils.isURIAttribute(node.getName().toString(),
-                                                attr.getName().toString())) {
-                        /* Get the referenced location. */
-                        URI loc =
-                            URI.create(toHypertext(inCtxt, outCtxt.plain(),
-                                                   value));
-
-                        /* Find out what the author thinks it means in
-                         * absolute terms. */
-                        loc = config.getAuthorAssumedLocation(inCtxt.element())
-                            .resolve(loc);
-
-                        /* Re-relativize it against where it's actually
-                         * going. */
-                        loc = Utils.relativize(outCtxt.location(), loc);
-
-                        /* Convert back to tree. */
-                        value = config.newTextTree(loc.toASCIIString());
-                    }
-                    switch (attr.getValueKind()) {
-                    case EMPTY:
+                var outCtxt = top();
+                try {
+                    switch (node.getName().toString()) {
+                    case "div":
+                    case "p":
+                    case "address":
+                    case "h1":
+                    case "h2":
+                    case "h3":
+                    case "h4":
+                    case "h5":
+                    case "h6":
+                    case "ul":
+                    case "ol":
+                    case "dl":
+                    case "pre":
+                    case "blockquote":
+                    case "form":
+                    case "fieldset":
+                    case "hr":
+                    case "noscript":
+                    case "table":
+                        if (!outCtxt.canMarkUpBlock()) return null;
                         break;
 
-                    case UNQUOTED:
-                        out.accept("=");
-                        toHypertext(out, inCtxt, outCtxt, value);
-                        break;
-
-                    case SINGLE:
-                    case DOUBLE:
-                        out.accept("=\"");
-                        toHypertext(out, inCtxt, outCtxt.inAttribute(), value);
-                        out.accept("\"");
+                    case "a":
+                        if (!outCtxt.canLink()) return null;
+                        // Fall through
+                    default:
+                        if (!outCtxt.canMarkUpInline()) return null;
                         break;
                     }
+
+                    out.accept("<");
+                    out.accept(node.getName());
+                    for (DocTree dattr : node.getAttributes()) {
+                        AttributeTree attr = (AttributeTree) dattr;
+                        out.accept(" ");
+                        out.accept(attr.getName());
+                        List<? extends DocTree> value = attr.getValue();
+                        /* If the author writes the likes of <a
+                         * href="foo">, he likely assumes a package- or
+                         * class-relative context, but that won't work
+                         * in general because class members are not
+                         * output to the same file as the class itself.
+                         * We have to work out what the author
+                         * originally meant, and re-relativize it
+                         * against what it is now. */
+                        if (DocUtils
+                            .isURIAttribute(node.getName().toString(),
+                                            attr.getName().toString())) {
+                            /* Get the referenced location. */
+                            URI loc =
+                                URI.create(toHypertext(inCtxt, outCtxt.plain(),
+                                                       value));
+
+                            /* Find out what the author thinks it means
+                             * in absolute terms. */
+                            loc = config
+                                .getAuthorAssumedLocation(inCtxt.element())
+                                .resolve(loc);
+
+                            /* Re-relativize it against where it's
+                             * actually going. */
+                            loc = Utils.relativize(outCtxt.location(), loc);
+
+                            /* Convert back to tree. */
+                            value = config.newTextTree(loc.toASCIIString());
+                        }
+                        switch (attr.getValueKind()) {
+                        case EMPTY:
+                            break;
+
+                        case UNQUOTED:
+                            out.accept("=");
+                            toHypertext(out, inCtxt, outCtxt, value);
+                            break;
+
+                        case SINGLE:
+                        case DOUBLE:
+                            out.accept("=\"");
+                            toHypertext(out, inCtxt, outCtxt.inAttribute(),
+                                        value);
+                            out.accept("\"");
+                            break;
+                        }
+                    }
+                    if (node.isSelfClosing()) out.accept("/");
+                    out.accept(">");
+                } finally {
+                    /* Always push a context for this element, even if
+                     * it makes no change. */
+                    if (!node.isSelfClosing()) {
+                        switch (node.getName().toString()) {
+                        case "code":
+                        case "samp":
+                        case "pre":
+                        case "kbd":
+                            outCtxt = outCtxt.inCode();
+                            break;
+                        }
+                        push(node.getName().toString(), outCtxt);
+                    }
                 }
-                if (node.isSelfClosing()) out.accept("/");
-                out.accept(">");
                 return null;
             }
 
             @Override
             public Void visitLink(LinkTree node, Void p) {
+                var outCtxt = top();
                 /* Find out what entity we're dealing with, and check
                  * for errors. */
                 final boolean plain =
@@ -760,6 +805,7 @@ public final class Slice {
 
             @Override
             public Void visitSystemProperty(SystemPropertyTree node, Void p) {
+                var outCtxt = top();
                 if (outCtxt.canMarkUpInline())
                     out.accept("<samp class=\"sysprop\">");
                 writeCamelText(out, outCtxt, node.getPropertyName());
@@ -769,6 +815,7 @@ public final class Slice {
 
             @Override
             public Void visitReturn(ReturnTree node, Void p) {
+                var outCtxt = top();
                 var descr = node.getDescription().stream().map(Object::toString)
                     .collect(Collectors.joining());
                 toHypertext(out, inCtxt, outCtxt,
@@ -778,6 +825,7 @@ public final class Slice {
 
             @Override
             public Void visitIndex(IndexTree node, Void p) {
+                var outCtxt = top();
                 var term = node.getSearchTerm();
                 /* TODO: If the term has been wrapped in double quotes
                  * to incorporate spaces, strip those quotes. */
@@ -797,12 +845,14 @@ public final class Slice {
 
             @Override
             public Void visitSummary(SummaryTree node, Void p) {
+                var outCtxt = top();
                 toHypertext(out, inCtxt, outCtxt, node.getSummary());
                 return null;
             }
 
             @Override
             public Void visitLiteral(LiteralTree node, Void p) {
+                var outCtxt = top();
                 switch (node.getTagName()) {
                 case "code":
                     if (outCtxt.canMarkUpInline())
@@ -820,6 +870,7 @@ public final class Slice {
 
             @Override
             public Void visitText(TextTree node, Void p) {
+                var outCtxt = top();
                 out.accept(outCtxt.escape(node.getBody()));
                 return null;
             }
@@ -827,6 +878,7 @@ public final class Slice {
             @Override
             public Void visitUnknownInlineTag(UnknownInlineTagTree node,
                                               Void p) {
+                var outCtxt = top();
                 /* For some reason, unknown in-line tags' content is not
                  * re-parsed, even though the API permits it. */
                 List<? extends DocTree> content = config.unflattenDoc(node);
@@ -942,6 +994,7 @@ public final class Slice {
 
             @Override
             public Void visitValue(ValueTree node, Void p) {
+                var outCtxt = top();
                 final Element refed;
 
                 if (node.getReference() == null) {
@@ -1121,7 +1174,14 @@ public final class Slice {
                          * convert to a string. */
                         rep = constant.toString();
                     }
-                    out.accept(outCtxt.escape(rep));
+                    if (outCtxt.canLink() &&
+                        (refed.getModifiers().contains(Modifier.PUBLIC) || refed
+                            .getModifiers().contains(Modifier.PROTECTED))) {
+                        writeElementReference(out, outCtxt, refed, LinkContent
+                            .forLabel(inCtxt, config.unflattenDoc(rep)));
+                    } else {
+                        out.accept(outCtxt.escape(rep));
+                    }
                     break;
                 }
 
