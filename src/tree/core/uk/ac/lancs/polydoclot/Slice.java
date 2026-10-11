@@ -2042,7 +2042,7 @@ public final class Slice {
         PrintWriter out =
             new PrintWriter(new OutputStreamWriter(byteOut,
                                                    StandardCharsets.UTF_8));
-        if (true) {
+        if (false) {
             out.printf("<!DOCTYPE html>\n");
         } else {
             out.printf("<!DOCTYPE html PUBLIC"
