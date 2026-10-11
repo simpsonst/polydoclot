@@ -116,6 +116,40 @@ body.javadoc .javadoc-hierarchy > * > tr > * {
     vertical-align: baseline;
 }
 
+body.javadoc .javadoc-qualities {
+    border-collapse: collapse;
+}
+
+body.javadoc .javadoc-qualities > tbody > tr > td {
+    padding: 0.2em;
+}
+
+body.javadoc .javadoc-members > tbody.group > tr.deprecated {
+    font-size: smaller;
+}
+
+body.javadoc .javadoc-members > tbody.group > tr.item.deprecated
+   > td.name-purpose > .purpose::after {
+    display: block;
+    font-weight: bold;
+    font-size: larger;
+}
+
+body.javadoc .javadoc-members > tbody.group > tr.item.deprecated
+   > td.name-purpose > .purpose:lang(en)::after {
+    content: "Deprecated";
+}
+
+body.javadoc .javadoc-members > tbody.group > tr.item.deprecated
+   > td.name-purpose > .purpose:lang(eo)::after {
+    content: "Kontraŭvolata";
+}
+
+body.javadoc .javadoc-members > tbody.group > tr.item.deprecated
+   > td.name-purpose > .purpose:lang(de)::after {
+    content: "Deprecated";
+}
+
 /*
 body.javadoc pre.java {
     margin: 0;
@@ -266,12 +300,12 @@ body.javadoc table.javadoc-members > tbody > tr.item >
 .name-purpose > .sig > .params > pre.params,
 body.javadoc table.javadoc-members > tbody > tr.item >
 		.name-purpose > .sig > .name {
+    margin-top: 0;
     margin-bottom: 0;
 }
 
 body.javadoc table.javadoc-members > tbody > tr.item >
 .name-purpose > .sig > .params > pre.params + pre.params {
-    margin-top: 0;
 }
 
 body.javadoc table.javadoc-terminals,
@@ -316,7 +350,7 @@ body.javadoc .element-index {
 	background-color: transparent;
 	background-image: none;
     }
-		       
+
     body.javadoc a:link {
 	color: rgb(0, 0, 238);
     }
@@ -331,6 +365,27 @@ body.javadoc .element-index {
 
     body.javadoc a:active {
 	color: #f00;
+    }
+
+    body.javadoc .javadoc-qualities > tbody > tr.deprecation {
+        background-color: #a00;
+        color: #fff;
+    }
+
+    body.javadoc .javadoc-qualities > tbody > tr.deprecation a:link {
+        color: #ffc;
+    }
+
+    body.javadoc .javadoc-qualities > tbody > tr.deprecation a:visited {
+        color: #eea;
+    }
+
+    body.javadoc .javadoc-qualities > tbody > tr.deprecation a:hover {
+        color: #eee;
+    }
+
+    body.javadoc .javadoc-qualities > tbody > tr.deprecation a:active {
+        color: #f00;
     }
 
     body.javadoc table.javadoc-qualities {
@@ -354,12 +409,20 @@ body.javadoc .element-index {
 	background-color: #fff;
     }
 
+    body.javadoc .javadoc-members > tbody.group > tr.item.deprecated.even {
+        background-color: #eee;
+    }
+
     body.javadoc table.javadoc-terminals > tbody > tr.item.odd,
     body.javadoc table.javadoc-members > tbody.group > tr.item.odd,
     body.javadoc table.javadoc-class-list > tbody > tr.item.odd,
     body.javadoc table.javadoc-hierarchy > tbody > tr.item.odd,
     body.javadoc table.javadoc-package-list > tbody > tr.item.odd {
 	background-color: #eef;
+    }
+
+    body.javadoc .javadoc-members > tbody.group > tr.item.deprecated.odd {
+        background-color: #dde;
     }
 
     body.javadoc .javadoc-context > pre {
