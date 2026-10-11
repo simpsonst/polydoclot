@@ -352,7 +352,7 @@ public abstract class OutputContext {
     }
 
     /**
-     * Get a context for text wrapped in <code>&lt;code&lt;</code>.
+     * Get a context for text wrapped in <code>&lt;code&gt;</code>.
      * 
      * @return the requested context
      */
