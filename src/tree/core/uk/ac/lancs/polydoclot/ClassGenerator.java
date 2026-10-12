@@ -413,30 +413,33 @@ public final class ClassGenerator {
                                 Collections.emptySet(), pseudoConstructors);
                 out.printf("</table>\n");
 
-                out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
-                           escaper.escape(slice
-                               .getContent("class-usage.caption")));
-                out.print("<table class=\"javadoc-members wide\" summary=\"");
-                slice
-                    .toHypertext(out::append, SourceContext.EMPTY,
-                                 blockContext.inAttribute(), slice
-                                     .getTreeContent("class-members.table-summary"));
-                out.print("\">\n");
-                out.print("<colgroup>\n");
-                out.print("<col class=\"modifiers\">\n");
-                out.print("<col class=\"return-type\">\n");
-                out.print("<col class=\"name-purpose\">\n");
-                out.print("</colgroup>\n");
-                writeMemberList(typeDef, "producers", "acquisition", out,
-                                blockContext, producers, Collections.emptySet(),
-                                pseudoConstructors);
-                writeMemberList(typeDef, "transformers", "transformation", out,
-                                blockContext, xforms, Collections.emptySet(),
-                                pseudoConstructors);
-                writeMemberList(typeDef, "consumers", "consumption", out,
-                                blockContext, consumers, Collections.emptySet(),
-                                pseudoConstructors);
-                out.printf("</table>\n");
+                if (!producers.isEmpty() || !xforms.isEmpty() ||
+                    !consumers.isEmpty()) {
+                    out.printf("<h2 class=\"resized\"><span>%s</span></h2>\n",
+                               escaper.escape(slice
+                                   .getContent("class-usage.caption")));
+                    out.print("<table class=\"javadoc-members wide\" summary=\"");
+                    slice
+                        .toHypertext(out::append, SourceContext.EMPTY,
+                                     blockContext.inAttribute(), slice
+                                         .getTreeContent("class-members.table-summary"));
+                    out.print("\">\n");
+                    out.print("<colgroup>\n");
+                    out.print("<col class=\"modifiers\">\n");
+                    out.print("<col class=\"return-type\">\n");
+                    out.print("<col class=\"name-purpose\">\n");
+                    out.print("</colgroup>\n");
+                    writeMemberList(typeDef, "producers", "acquisition", out,
+                                    blockContext, producers,
+                                    Collections.emptySet(), pseudoConstructors);
+                    writeMemberList(typeDef, "transformers", "transformation",
+                                    out, blockContext, xforms,
+                                    Collections.emptySet(), pseudoConstructors);
+                    writeMemberList(typeDef, "consumers", "consumption", out,
+                                    blockContext, consumers,
+                                    Collections.emptySet(), pseudoConstructors);
+                    out.printf("</table>\n");
+                }
 
                 slice.writeClassHierarchy(out, blockContext,
                                           Collections.singleton(typeDef));
