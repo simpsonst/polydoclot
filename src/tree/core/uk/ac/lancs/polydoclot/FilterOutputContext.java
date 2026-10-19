@@ -112,6 +112,17 @@ public class FilterOutputContext extends OutputContext {
     /**
      * {@inheritDoc}
      * 
+     * @implNote This implementation invokes
+     * {@link OutputContext#attributeEscaper()} on {@link #base}.
+     */
+    @Override
+    public Escaper attributeEscaper() {
+        return base.attributeEscaper();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      * @default This implementation invokes
      * {@link OutputContext#canLink()} on {@link #base}.
      */
