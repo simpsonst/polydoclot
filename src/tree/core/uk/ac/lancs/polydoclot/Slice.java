@@ -38,6 +38,7 @@ package uk.ac.lancs.polydoclot;
 
 import com.sun.source.doctree.AttributeTree;
 import com.sun.source.doctree.AuthorTree;
+import com.sun.source.doctree.CommentTree;
 import com.sun.source.doctree.DeprecatedTree;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocRootTree;
@@ -664,6 +665,13 @@ public final class Slice {
                                 docs);
                     break;
                 }
+                return null;
+            }
+
+            @Override
+            public Void visitComment(CommentTree node, Void p) {
+                var outCtxt = top();
+                if (outCtxt.canMarkUpInline()) out.accept(node.getBody());
                 return null;
             }
 
