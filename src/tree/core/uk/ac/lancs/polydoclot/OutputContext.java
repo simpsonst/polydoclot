@@ -176,6 +176,11 @@ public abstract class OutputContext {
     public final OutputContext accountFor(TypeVariable tv) {
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "accountFor{" + tv + "}+" + OutputContext.this;
+            }
+
+            @Override
             public boolean isAccountedFor(TypeVariable tv2) {
                 return types.isSameType(tv, tv2) || super.isAccountedFor(tv2);
             }
@@ -233,6 +238,11 @@ public abstract class OutputContext {
     public final OutputContext forPureCharacterData() {
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "pure+" + OutputContext.this;
+            }
+
+            @Override
             public boolean canLink() {
                 return false;
             }
@@ -263,6 +273,11 @@ public abstract class OutputContext {
         if (isStatic()) return this;
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "static+" + OutputContext.this;
+            }
+
+            @Override
             public boolean isStatic() {
                 return true;
             }
@@ -279,6 +294,11 @@ public abstract class OutputContext {
     public final OutputContext inElement(Element elem) {
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "element{" + elem + "}+" + OutputContext.this;
+            }
+
+            @Override
             public Element element() {
                 return elem;
             }
@@ -294,6 +314,11 @@ public abstract class OutputContext {
      */
     public final OutputContext inAttribute() {
         return new FilterOutputContext(this) {
+            @Override
+            public String toString() {
+                return "attr+" + OutputContext.this;
+            }
+
             @Override
             public boolean canLink() {
                 return false;
@@ -340,6 +365,11 @@ public abstract class OutputContext {
     public final OutputContext inLink() {
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "link+" + OutputContext.this;
+            }
+
+            @Override
             public boolean canLink() {
                 return false;
             }
@@ -359,6 +389,11 @@ public abstract class OutputContext {
     public final OutputContext inCode() {
         return new FilterOutputContext(this) {
             @Override
+            public String toString() {
+                return "code+" + OutputContext.this;
+            }
+
+            @Override
             public boolean canMarkAsCode() {
                 return false;
             }
@@ -372,6 +407,11 @@ public abstract class OutputContext {
      */
     public final OutputContext inline() {
         return new FilterOutputContext(this) {
+            @Override
+            public String toString() {
+                return "inline+" + OutputContext.this;
+            }
+
             @Override
             public boolean canMarkUpBlock() {
                 return false;
@@ -400,6 +440,12 @@ public abstract class OutputContext {
                                          Element element, Escaper escaper,
                                          Escaper attrEscaper) {
         return new OutputContext(types) {
+            @Override
+            public String toString() {
+                return "forBlock{" + element + "," + escaper + "," + attrEscaper
+                    + "}";
+            }
+
             @Override
             public boolean canLink() {
                 return true;
@@ -469,6 +515,11 @@ public abstract class OutputContext {
     public static OutputContext plain(Types types, URI location,
                                       Element element) {
         return new OutputContext(types) {
+            @Override
+            public String toString() {
+                return "plain{" + element + "}";
+            }
+
             @Override
             public boolean canLink() {
                 return false;

@@ -57,6 +57,11 @@ public final class HypertextEscaper implements Escaper {
 
     private final boolean doubleQuotes;
 
+    @Override
+    public String toString() {
+        return encoder.charset().toString() + (doubleQuotes ? "+quotes" : "");
+    }
+
     private HypertextEscaper(Charset charset, boolean doubleQuotes) {
         this.encoder = charset.newEncoder();
         this.doubleQuotes = doubleQuotes;
