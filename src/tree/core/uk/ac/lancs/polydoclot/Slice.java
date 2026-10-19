@@ -764,9 +764,9 @@ public final class Slice {
                     if (!node.isSelfClosing()) {
                         switch (node.getName().toString()) {
                         case "code":
-                        case "samp":
-                        case "pre":
-                        case "kbd":
+                        case "samp": // TODO: Remove?
+                        case "pre": // TODO: Remove?
+                        case "kbd": // TODO: Remove?
                             outCtxt = outCtxt.inCode();
                             break;
                         }
